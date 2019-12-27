@@ -1,0 +1,14 @@
+Package: SurvBin
+Title: Two-sample statistics for binary and time-to-event outcomes
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Marta",
+           family = "Bofill Roig",
+           role = c("aut", "cre"),
+           email = "marta.bofill.roig@upc.edu",
+           comment = c(ORCID = "0000-0002-4400-7541"))
+Description: Functions to compare two populations based on binary and time-to-event outcomes.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
