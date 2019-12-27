@@ -1,1 +1,1 @@
-# survivalbinary
+# SurvBin Package
