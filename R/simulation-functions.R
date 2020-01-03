@@ -17,17 +17,6 @@
 #' @author Marta Bofill Roig
 #'
 
-# cop2 : conditional transformation for copula FRANK
-# simsurvbin : simulates binary and survival data; returns the database
-# fCS.TEST : simulates binary and survival data; returns the L-statistic
-
-##################################################################################
-
-# Table A1 conditional transformation for copula FRANK
-cop2 <- function(v1,v2,theta){
-  u2 = -(1/theta)*log(1+(v2*(1-exp(-theta)))/(v2*(exp(-theta*v1)-1)-exp(-theta*v1)))
-}
-
 ##################################################################################
 simsurvbin <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp"){
 
@@ -89,38 +78,11 @@ simsurvbin <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censori
   return(db)
 }
 
-
 ##################################################################################
 
-fCS.TEST <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp", tau, taub, rho, gam, eta, w1, w2){
-
-  # TWO-SAMPLE db
-  ######################################
-  db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
-
-  # STATISTICS
-  ######################################
-  TestBS = lstats(db$time,db$status, db$binary, db$treat, tau0=0, tau, taub, rho, gam, eta, w1, w2)
-
-  return(TestBS[1])
-}
-
-
-##################################################################################
-
-fCS.TEST_Bonf <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp", tau, taub, rho, gam, eta){
-
-  # TWO-SAMPLE db
-  ######################################
-  db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
-
-  # STATISTICS
-  ######################################
-  B <- bintest(db$binary, db$treat, var_est="Unpooled")
-  test_b <- B[1]
-
-  S <- survtest(db$time, db$status, db$treat, tau, rho, gam, eta)
-  test_s <- S[1]
-
-  return(c(test_b,test_s))
+# Auxiliar function
+# cop2 : conditional transformation for copula FRANK
+# Table A1 conditional transformation for copula FRANK
+cop2 <- function(v1,v2,theta){
+  u2 = -(1/theta)*log(1+(v2*(1-exp(-theta)))/(v2*(exp(-theta*v1)-1)-exp(-theta*v1)))
 }

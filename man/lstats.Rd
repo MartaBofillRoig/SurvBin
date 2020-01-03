@@ -5,7 +5,7 @@
 \title{L-Statistics for binary and time-to-event outcomes}
 \usage{
 lstats(time, status, binary, treat, tau0 = 0, tau = NULL,
-  taub = NULL, rho = 0, gam = 0, eta = 1, w1 = 0.5, w2 = 0.5)
+  taub = NULL, rho = 0, gam = 0, eta = 1, wb = 0.5, ws = 0.5)
 }
 \arguments{
 \item{time}{The observed time.}
@@ -28,9 +28,9 @@ lstats(time, status, binary, treat, tau0 = 0, tau = NULL,
 
 \item{eta}{A scalar parameter that controls the type of test (see Weights).}
 
-\item{w1}{A scalar parameter that controls the type of test (see Weights).}
+\item{wb}{A scalar parameter that controls the type of test (see Weights).}
 
-\item{w2}{A scalar parameter that controls the type of test (see Weights).}
+\item{ws}{A scalar parameter that controls the type of test (see Weights).}
 }
 \value{
 List: standardized statistic, statistic and variance.

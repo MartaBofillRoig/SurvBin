@@ -37,7 +37,6 @@ survtest <- function(time, status, treat, tau=NULL, rho=0, gam=0, eta=1){
 
   # Estimation of the pooled KM curve
   kmp <- survfit(Surv(time, status) ~ 1, data = db)
-  # pooled.km <- summary(survfit(Surv(time, status) ~ 1, data = db))
 
   # Estimation of the KM curve for the time-to-censoring
   censkm1 <- survfit(Surv(time=time,status==0)~1, data = db1)
@@ -46,7 +45,6 @@ survtest <- function(time, status, treat, tau=NULL, rho=0, gam=0, eta=1){
   # Kaplan-Meier function
   km1_f <- stepfun(km1$time, c(1, km1$surv))
   km0_f <- stepfun(km0$time, c(1, km0$surv))
-  # pooled.km.f <- stepfun(pooled.km$time, c(1, pooled.km$surv))
   kmp_f <- stepfun(kmp$time, c(1, kmp$surv))
 
   # Censoring Kaplan-Meier function

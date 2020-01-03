@@ -12,9 +12,8 @@
 #' @author Marta Bofill Roig
 
 bintest <- function(binary,treat,var_est='Unpooled'){
-  # x1=data$binary; x2=data$treat;
-  db=cbind.data.frame(binary=binary, treat=treat)
 
+  db=cbind.data.frame(binary=binary, treat=treat)
   db1=subset(db,db$treat==1)
   db0=subset(db,db$treat==0)
 
@@ -30,26 +29,14 @@ bintest <- function(binary,treat,var_est='Unpooled'){
   if(var_est=='Unpooled'){
     var.bin= phat_group0*(1-phat_group0)/n0+phat_group1*(1-phat_group1)/n1
   }else{
-    # phat_pooled = (phat_group0*n0 + phat_group1*n1)/n
     var.bin = (n/(n0*n1))*phat_pooled*(1-phat_pooled)
   }
-  # test risk difference with pooled variance /unpooled v
-  # Zb = sqrt(ss/2)*(phat_group1-phat_group0)/sqrt(phat_pooled*(1-phat_pooled))
   Zb = (phat_group1-phat_group0)/sqrt(var.bin)
-
 
   # return(list=c(Test=Zb,Ub=sqrt((n0*n1)/n)*(phat_group1-phat_group0),sd=sqrt(var.bin) ))
   return(list=c(Test=Zb,Ub=sqrt((n0*n1)/n)*(phat_group1-phat_group0),sd=sqrt(phat_pooled*(1-phat_pooled))  ))
   # return(list=c(Test=Zb,d=phat_group1-phat_group0,sd=sqrt(var.bin) ))
-  # return(Zb)
 }
-
-
-##################################################################################
-# Example
-# bintest(data$binary, data$treat)
-
-
 
 
 

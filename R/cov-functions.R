@@ -18,7 +18,7 @@
 #' @return Covariance.
 #' @author Marta Bofill Roig
 
-survbinCov_kernel <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1){
+survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1){
   # require(zoo) # 'rollmean' function
   # require(survival)
   # require(muhaz)
