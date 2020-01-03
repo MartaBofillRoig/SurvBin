@@ -11,4 +11,10 @@ Description: Functions to compare two populations based on binary and time-to-ev
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Imports:
+	survival,
+	zoo,
+	pracma,
+	copula,
+	muhaz
 RoxygenNote: 6.1.1
