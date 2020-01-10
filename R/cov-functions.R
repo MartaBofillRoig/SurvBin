@@ -180,7 +180,7 @@ survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL,
   w <- ifelse(censkm0_f(midfail_times_pretaub)+censkm1_f(midfail_times_pretaub) == 0,
               0,
               (n*censkm0_f(midfail_times_pretaub)*censkm1_f(midfail_times_pretaub))/(n0*censkm0_f(midfail_times_pretaub)+n1*censkm1_f(midfail_times_pretaub))
-              )
+  )
   # weight function proposed by Fleming-Harrington: f^rho*(1-f)^gam
   f <- kmp_f(midfail_times_pretaub)
   # Define the weight function as a product of w and f
@@ -251,10 +251,19 @@ survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL,
     Int1 <- (Integral1[l_postaub] - Integral1)
 
     # Calculate the integral part 1
-    cov_value_posttau =  (n1*sum(Int0*phat_group0*(KM0x_jumps*km0x_f(midfail_times_postaub)/km0x_f(fail_times_postaub)-
-                                                     KM0_jumps*km0_f(midfail_times_postaub)/km0_f(fail_times_postaub))/km0_f(fail_times_postaub)) +
-                            n0*sum(Int1*phat_group1*(KM1x_jumps*km1x_f(midfail_times_postaub)/km1_f(fail_times_postaub) -
-                                                       KM1_jumps*km1_f(midfail_times_postaub)/km1_f(fail_times_postaub))/km1_f(fail_times_postaub)))/n
+    sum_part1 = ifelse(km0x_f(fail_times_postaub)*km0_f(fail_times_postaub)*km0_f(midfail_times_postaub) == 0,
+                       0,
+                       Int0*phat_group0*(KM0x_jumps*km0x_f(midfail_times_postaub)/km0x_f(fail_times_postaub)-
+                                           KM0_jumps*km0_f(midfail_times_postaub)/km0_f(fail_times_postaub))/km0_f(midfail_times_postaub)
+    )
+
+    sum_part2 = ifelse(km1x_f(fail_times_postaub)*km1_f(fail_times_postaub)*km1_f(midfail_times_postaub) == 0,
+                       0,
+                       Int1*phat_group1*(KM1x_jumps*km1x_f(midfail_times_postaub)/km1x_f(fail_times_postaub) -
+                                           KM1_jumps*km1_f(midfail_times_postaub)/km1_f(fail_times_postaub))/km1_f(midfail_times_postaub)
+    )
+
+    cov_value_posttau =  (n1*sum(sum_part1) + n0*sum(sum_part2))/n
 
   }
 
