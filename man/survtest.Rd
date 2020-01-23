@@ -4,8 +4,16 @@
 \alias{survtest}
 \title{Tests for time-to-event outcomes}
 \usage{
-survtest(time, status, treat, tau = NULL, rho = 0, gam = 0,
-  eta = 1)
+survtest(
+  time,
+  status,
+  treat,
+  tau = NULL,
+  rho = 0,
+  gam = 0,
+  eta = 1,
+  var_est = "Unpooled"
+)
 }
 \arguments{
 \item{time}{The observed time.}
@@ -21,6 +29,8 @@ survtest(time, status, treat, tau = NULL, rho = 0, gam = 0,
 \item{gam}{A scalar parameter that controls the type of test (see Weights).}
 
 \item{eta}{A scalar parameter that controls the type of test (see Weights).}
+
+\item{var_est}{indicates the variance estimate to use ('Pooled' or 'Unpooled')}
 }
 \value{
 List: standardized statistic, statistic and variance.

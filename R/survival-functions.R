@@ -9,13 +9,15 @@
 #' @param rho A scalar parameter that controls the type of test (see Weights).
 #' @param gam A scalar parameter that controls the type of test (see Weights).
 #' @param eta A scalar parameter that controls the type of test (see Weights).
+#' @param var_est indicates the variance estimate to use ('Pooled' or 'Unpooled')
 #'
 #' @export
 #'
 #' @return List: standardized statistic, statistic and variance.
 #' @author Marta Bofill Roig
+#'
 
-survtest <- function(time, status, treat, tau=NULL, rho=0, gam=0, eta=1){
+survtest <- function(time, status, treat, tau=NULL, rho=0, gam=0, eta=1,var_est='Unpooled'){
   # require(zoo) # 'rollmean' function
   # require(survival)
 
@@ -105,20 +107,46 @@ survtest <- function(time, status, treat, tau=NULL, rho=0, gam=0, eta=1){
 
   # Variance computation
   ######################################
+  if(var_est=='Unpooled'){
+    # Kaplan-Meier jumps
+    # group 0
+    KM0_jumps <- diff(c(1,km0_f(fail_times)))
+    # group 1
+    KM1_jumps <- diff(c(1,km1_f(fail_times)))
 
-  KMp_jumpsaux <- c(1,kmp_f(fail_times))
-  KMp_jumps <- as.numeric(l)
+    # Calculate the integral: int_{t,tau}(weight * surv)
+    # group 0
+    Integral0 <- cumsum(diff(c(0, fail_times)) * weight * km0_f(fail_times))
+    Int0 <- (Integral0[l] - Integral0)
+    # group 1
+    Integral1 <- cumsum(diff(c(0, fail_times)) * weight * km1_f(fail_times))
+    Int1 <- (Integral1[l] - Integral1)
 
-  for(i in 2:(l+1)){
-    KMp_jumps[i-1] = KMp_jumpsaux[i]-KMp_jumpsaux[i-1]
+    # Calculate the estimated (unpooled) variance
+    var_inside0 = ifelse(preKM0*KM0==0, 0, Int0^2*(w)^(-1)*KM0_jumps/(preKM0*KM0))
+    var_inside1 = ifelse(preKM1*KM1==0, 0, Int1^2*(w)^(-1)*KM1_jumps/(preKM1*KM1))
+
+    variance = (-n1*(sum(var_inside0,na.rm = TRUE))-
+                  n0*(sum(var_inside1,na.rm = TRUE)))/n
+
+  }else{
+    KMp_jumpsaux <- c(1,kmp_f(fail_times))
+    KMp_jumps <- as.numeric(l)
+
+    for(i in 2:(l+1)){
+      KMp_jumps[i-1] = KMp_jumpsaux[i]-KMp_jumpsaux[i-1]
+    }
+
+    # Calculate the integral: int_{t,tau}(weight * surv)
+    Integral1 <- cumsum(diff(c(0, fail_times)) * weight * KMpooled)
+    Int <- (Integral1[l] - Integral1)
+
+    # Calculate the estimated (pooled) variance
+    var_inside = ifelse(preKMpooled*KMpooled==0, 0, Int^2*(w)^(-1)*KMp_jumps/(preKMpooled*KMpooled))
+
+    variance =  -sum(var_inside,na.rm = TRUE)
   }
 
-  # Calculate the integral: int_{t,tau}(weight * surv)
-  Integral1 <- cumsum(diff(c(0, fail_times)) * weight * KMpooled)
-  Int <- (Integral1[l] - Integral1)
-
-  # Calculate the estimated (pooled) variance
-  variance =  -sum(Int^2*(w)^(-1)*KMp_jumps/(preKMpooled*KMpooled),na.rm = TRUE)
   stdev <- sqrt(variance)
 
   # Standardized statistic

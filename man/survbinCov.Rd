@@ -4,8 +4,19 @@
 \alias{survbinCov}
 \title{Covariance between binary and time-to-event statistics}
 \usage{
-survbinCov(time, status, binary, treat, tau0 = 0, tau = NULL,
-  taub = NULL, rho = 0, gam = 0, eta = 1)
+survbinCov(
+  time,
+  status,
+  binary,
+  treat,
+  tau0 = 0,
+  tau = NULL,
+  taub = NULL,
+  rho = 0,
+  gam = 0,
+  eta = 1,
+  var_est = "Pooled"
+)
 }
 \arguments{
 \item{time}{The observed time.}
@@ -27,6 +38,8 @@ survbinCov(time, status, binary, treat, tau0 = 0, tau = NULL,
 \item{gam}{A scalar parameter that controls the type of test (see Weights).}
 
 \item{eta}{A scalar parameter that controls the type of test (see Weights).}
+
+\item{var_est}{indicates the variance estimate to use ('Pooled' or 'Unpooled')}
 }
 \value{
 Covariance.

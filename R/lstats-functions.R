@@ -14,13 +14,14 @@
 #' @param eta A scalar parameter that controls the type of test (see Weights).
 #' @param wb A scalar parameter that controls the type of test (see Weights).
 #' @param ws A scalar parameter that controls the type of test (see Weights).
+#' @param var_est indicates the variance estimate to use ('Pooled' or 'Unpooled')
 #'
 #' @export
 #'
 #' @return List: standardized statistic, statistic and variance.
 #' @author Marta Bofill Roig
 
-lstats <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1, wb=0.5, ws=0.5){
+lstats <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1, wb=0.5, ws=0.5, var_est="Unpooled"){
 
   db=cbind.data.frame(time=time, status=status, binary=binary, treat=treat)
 
@@ -34,15 +35,15 @@ lstats <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho
   # KAPLAN-MEIER ESTIMATORS
   ######################################
 
-  B <- bintest(db$binary, db$treat, var_est="Unpooled")
+  B <- bintest(db$binary, db$treat, var_est)
   test_b <- B[1]
   sigma_b <- B[3]
 
-  S <- survtest(db$time, db$status, db$treat, tau, rho, gam, eta)
+  S <- survtest(db$time, db$status, db$treat, tau, rho, gam, eta, var_est)
   test_s <- S[1]
   sigma_s <- S[3]
 
-  sigma_sb <- survbinCov(db$time,db$status,db$binary,db$treat, tau0, tau, taub, rho, gam, eta)
+  sigma_sb <- survbinCov(db$time,db$status,db$binary,db$treat, tau0, tau, taub, rho, gam, eta, var_est)
 
   # Calculate the statistic
   u_bs = wb*test_b + ws*test_s

@@ -4,8 +4,7 @@
 \alias{simsurvbin}
 \title{Simulation binary and time-to-event data}
 \usage{
-simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss,
-  censoring = "Exp")
+simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring = "Exp")
 }
 \arguments{
 \item{a.shape}{shape parameter Weibull}

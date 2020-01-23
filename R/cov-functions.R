@@ -12,13 +12,14 @@
 #' @param rho A scalar parameter that controls the type of test (see Weights).
 #' @param gam A scalar parameter that controls the type of test (see Weights).
 #' @param eta A scalar parameter that controls the type of test (see Weights).
+#' @param var_est indicates the variance estimate to use ('Pooled' or 'Unpooled')
 #'
 #' @export
 #'
 #' @return Covariance.
 #' @author Marta Bofill Roig
 
-survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1){
+survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1, var_est='Pooled'){
   # require(zoo) # 'rollmean' function
   # require(survival)
   # require(muhaz)
@@ -50,6 +51,8 @@ survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL,
 
   phat_group0 = sum(db0$binary)/n0
   phat_group1 = sum(db1$binary)/n1
+
+  phat_groupp = sum(db$binary)/n
 
   # KAPLAN-MEIER ESTIMATORS
   ######################################
@@ -88,13 +91,6 @@ survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL,
   censkm1_f <- stepfun(censkm1$time, c(1, censkm1$surv))
   censkm0_f <- stepfun(censkm0$time, c(1, censkm0$surv))
 
-  # Hazard function
-  # version with kernels
-  fit <- muhaz(db1$time,db1$status)
-  hazard1_f <- approxfun(fit$est.grid, fit$haz.est)
-  fit <- muhaz(db0$time,db0$status)
-  hazard0_f <- approxfun(fit$est.grid, fit$haz.est)
-
   # RESPONDERS
   # Hazard function for responders
   # version with kernels
@@ -104,11 +100,16 @@ survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL,
   db1_aux[which(db1$status==1 & db1$binary==0),]$status=0
   db0_aux=db0
   db0_aux[which(db0$status==1 & db0$binary==0),]$status=0
+  # db_aux=db
+  # db_aux[which(db$status==1 & db$binary==0),]$status=0
 
   fit <- muhaz(db1_aux$time,db1_aux$status)
   hazard1X_f <- approxfun(fit$est.grid, fit$haz.est)
   fit <- muhaz(db0_aux$time,db0_aux$status)
   hazard0X_f <- approxfun(fit$est.grid, fit$haz.est)
+
+  # fit <- muhaz(db_aux$time,db_aux$status)
+  # hazardpX_f <- approxfun(fit$est.grid, fit$haz.est)
 
   # TIMEPOINTS FOR INTEGRALS' COMPUTATION
   ###########################################
@@ -154,117 +155,209 @@ survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL,
   l_postaub = length(fail_times_postaub)
 
 
-  ############################################################################################
-  # Compute the covariate integral
-  # INTEGRAL PART 1: from tau0 to taub
-  ############################################################################################
+  if(var_est=='Unpooled'){
 
-  # ESTIMATES' VALUES FOR INTEGRALS' COMPUTATION
-  ################################################
-  # Note that km0_f(midfail_times_pretaub) corresponds to Kaplan-Meier estimates' values at midpoints between event times (failure and censoring times)
-  # Note that km0_f(fail_times_pretaub) corresponds to Kaplan-Meier estimates' values at event times (failure and censoring times)
-  # Analogously with km1_f(), kmp_f(), censkm0_f(), censkm1_f(), cpn1_f(), cpn0_f(), ...
+    ############################################################################################
+    # Compute the covariate integral
+    # INTEGRAL PART 1: from tau0 to taub
+    ############################################################################################
 
-  # Counting process: dN function
+    # ESTIMATES' VALUES FOR INTEGRALS' COMPUTATION
+    ################################################
+    # Note that km0_f(midfail_times_pretaub) corresponds to Kaplan-Meier estimates' values at midpoints between event times (failure and censoring times)
+    # Note that km0_f(fail_times_pretaub) corresponds to Kaplan-Meier estimates' values at event times (failure and censoring times)
+    # Analogously with km1_f(), kmp_f(), censkm0_f(), censkm1_f(), ...
 
-  # version with kernel
-  hazard1_values <- hazard1_f(fail_times_pretaub)
-  hazard0_values <- hazard0_f(fail_times_pretaub)
-  hazard1X_values <- hazard1X_f(fail_times_pretaub)
-  hazard0X_values <- hazard0X_f(fail_times_pretaub)
+    # Hazard values
+    # version with kernel
+    hazard1X_values <- hazard1X_f(fail_times_pretaub)
+    hazard0X_values <- hazard0X_f(fail_times_pretaub)
 
-  # Compute the weight function
-  ######################################
-
-  # weight function proposed by Pepe-Fleming: w
-  w <- ifelse(censkm0_f(midfail_times_pretaub)+censkm1_f(midfail_times_pretaub) == 0,
-              0,
-              (n*censkm0_f(midfail_times_pretaub)*censkm1_f(midfail_times_pretaub))/(n0*censkm0_f(midfail_times_pretaub)+n1*censkm1_f(midfail_times_pretaub))
-  )
-  # weight function proposed by Fleming-Harrington: f^rho*(1-f)^gam
-  f <- kmp_f(midfail_times_pretaub)
-  # Define the weight function as a product of w and f
-  weight <- w^(eta)*f^rho*(1-f)^gam
-
-  # Kaplan-Meier jumps
-  # group 0
-  KM0_jumps <- diff(c(1,km0_f(fail_times_pretaub)))
-
-  # group 1
-  KM1_jumps <- diff(c(1,km1_f(fail_times_pretaub)))
-
-  # Calculate the integral: int_{t,tau}(weight * surv)
-  # group 0
-  Integral0 <- cumsum(diff(c(0, fail_times_pretaub)) * weight * km0_f(fail_times_pretaub))
-  Int0 <- (Integral0[l_pretaub] - Integral0)
-  # group 1
-  Integral1 <- cumsum(diff(c(0, fail_times_pretaub)) * weight * km1_f(fail_times_pretaub))
-  Int1 <- (Integral1[l_pretaub] - Integral1)
-
-
-  # Calculate the integral 1A
-  integral1A = -(n1/n)*sum(Int0*hazard0X_values*diff(c(0, fail_times_pretaub)),na.rm = TRUE) - (n0/n)*sum(Int1*hazard1X_values*diff(c(0, fail_times_pretaub)),na.rm = TRUE)
-
-  # Calculate the integral 1B
-  integral1B = -(n1/n)*sum(Int0*phat_group0*KM0_jumps/km0_f(fail_times_pretaub),na.rm = TRUE) - (n0/n)*sum(Int1*phat_group1*KM1_jumps/km1_f(fail_times_pretaub),na.rm = TRUE)
-
-  # Calculate the integral part 1
-  cov_value_pretaub =  integral1A + integral1B
-
-  ############################################################################################
-  # Compute the covariate integral
-  # INTEGRAL 2: from taub to tau
-  ############################################################################################
-  cov_value_posttau = 0
-  if(taub<tau){
     # Compute the weight function
     ######################################
-    # weight function proposed by Pepe-Fleming
-    w <- ifelse(censkm0_f(midfail_times_postaub)+censkm1_f(midfail_times_postaub) == 0,
+
+    # weight function proposed by Pepe-Fleming: w
+    w <- ifelse(censkm0_f(midfail_times_pretaub)+censkm1_f(midfail_times_pretaub) == 0,
                 0,
-                (n*censkm0_f(midfail_times_postaub)*censkm1_f(midfail_times_postaub))/(n0*censkm0_f(midfail_times_postaub) + n1*censkm1_f(midfail_times_postaub)))
-    # weight function proposed by Fleming-Harrington
-    f <- kmp_f(midfail_times_postaub)
+                (n*censkm0_f(midfail_times_pretaub)*censkm1_f(midfail_times_pretaub))/(n0*censkm0_f(midfail_times_pretaub)+n1*censkm1_f(midfail_times_pretaub))
+    )
+    # weight function proposed by Fleming-Harrington: f^rho*(1-f)^gam
+    f <- kmp_f(midfail_times_pretaub)
     # Define the weight function as a product of w and f
     weight <- w^(eta)*f^rho*(1-f)^gam
 
-    # Compute the Kaplan-Meier jumps
-    ######################################
     # Kaplan-Meier jumps
     # group 0
-    KM0_jumps <- diff(c(1,km0_f(fail_times_postaub)))
+    KM0_jumps <- diff(c(1,km0_f(fail_times_pretaub)))
     # group 1
-    KM1_jumps <- diff(c(1,km1_f(fail_times_postaub)))
-
-    # Kaplan-Meier responders
-    # group 0
-    KM0x_jumps <- diff(c(1,km0x_f(fail_times_postaub)))
-    # group 1
-    KM1x_jumps <- diff(c(1,km1x_f(fail_times_postaub)))
+    KM1_jumps <- diff(c(1,km1_f(fail_times_pretaub)))
 
     # Calculate the integral: int_{t,tau}(weight * surv)
     # group 0
-    Integral0 <- cumsum(diff(c(0, fail_times_postaub)) * weight * km0_f(fail_times_postaub))
-    Int0 <- (Integral0[l_postaub] - Integral0)
+    Integral0 <- cumsum(diff(c(0, fail_times_pretaub)) * weight * km0_f(fail_times_pretaub))
+    Int0 <- (Integral0[l_pretaub] - Integral0)
     # group 1
-    Integral1 <- cumsum(diff(c(0, fail_times_postaub)) * weight * km1_f(fail_times_postaub))
-    Int1 <- (Integral1[l_postaub] - Integral1)
+    Integral1 <- cumsum(diff(c(0, fail_times_pretaub)) * weight * km1_f(fail_times_pretaub))
+    Int1 <- (Integral1[l_pretaub] - Integral1)
+
+
+    # Calculate the integral 1A
+    integral1A = -(n1/n)*sum(Int0*hazard0X_values*diff(c(0, fail_times_pretaub)),na.rm = TRUE) - (n0/n)*sum(Int1*hazard1X_values*diff(c(0, fail_times_pretaub)),na.rm = TRUE)
+
+    # Calculate the integral 1B
+    integral1B = -(n1/n)*sum(Int0*phat_group0*KM0_jumps/km0_f(fail_times_pretaub),na.rm = TRUE) - (n0/n)*sum(Int1*phat_group1*KM1_jumps/km1_f(fail_times_pretaub),na.rm = TRUE)
 
     # Calculate the integral part 1
-    sum_part1 = ifelse(km0x_f(fail_times_postaub)*km0_f(fail_times_postaub)*km0_f(midfail_times_postaub) == 0,
-                       0,
-                       Int0*phat_group0*(KM0x_jumps*km0x_f(midfail_times_postaub)/km0x_f(fail_times_postaub)-
-                                           KM0_jumps*km0_f(midfail_times_postaub)/km0_f(fail_times_postaub))/km0_f(midfail_times_postaub)
+    cov_value_pretaub =  integral1A + integral1B
+
+    ############################################################################################
+    # Compute the covariate integral
+    # INTEGRAL 2: from taub to tau
+    ############################################################################################
+    cov_value_posttau = 0
+    if(taub<tau){
+      # Compute the weight function
+      ######################################
+      # weight function proposed by Pepe-Fleming
+      w <- ifelse(censkm0_f(midfail_times_postaub)+censkm1_f(midfail_times_postaub) == 0,
+                  0,
+                  (n*censkm0_f(midfail_times_postaub)*censkm1_f(midfail_times_postaub))/(n0*censkm0_f(midfail_times_postaub) + n1*censkm1_f(midfail_times_postaub)))
+      # weight function proposed by Fleming-Harrington
+      f <- kmp_f(midfail_times_postaub)
+      # Define the weight function as a product of w and f
+      weight <- w^(eta)*f^rho*(1-f)^gam
+
+      # Compute the Kaplan-Meier jumps
+      ######################################
+      # Kaplan-Meier jumps
+      # group 0
+      KM0_jumps <- diff(c(1,km0_f(fail_times_postaub)))
+      # group 1
+      KM1_jumps <- diff(c(1,km1_f(fail_times_postaub)))
+
+      # Kaplan-Meier responders
+      # group 0
+      KM0x_jumps <- diff(c(1,km0x_f(fail_times_postaub)))
+      # group 1
+      KM1x_jumps <- diff(c(1,km1x_f(fail_times_postaub)))
+
+      # Calculate the integral: int_{t,tau}(weight * surv)
+      # group 0
+      Integral0 <- cumsum(diff(c(0, fail_times_postaub)) * weight * km0_f(fail_times_postaub))
+      Int0 <- (Integral0[l_postaub] - Integral0)
+      # group 1
+      Integral1 <- cumsum(diff(c(0, fail_times_postaub)) * weight * km1_f(fail_times_postaub))
+      Int1 <- (Integral1[l_postaub] - Integral1)
+
+      # Calculate the integral part 1
+      sum_part1 = ifelse(km0x_f(fail_times_postaub)*km0_f(fail_times_postaub)*km0_f(midfail_times_postaub) == 0,
+                         0,
+                         Int0*phat_group0*(KM0x_jumps*km0x_f(midfail_times_postaub)/km0x_f(fail_times_postaub)-
+                                             KM0_jumps*km0_f(midfail_times_postaub)/km0_f(fail_times_postaub))/km0_f(midfail_times_postaub)
+      )
+
+      sum_part2 = ifelse(km1x_f(fail_times_postaub)*km1_f(fail_times_postaub)*km1_f(midfail_times_postaub) == 0,
+                         0,
+                         Int1*phat_group1*(KM1x_jumps*km1x_f(midfail_times_postaub)/km1x_f(fail_times_postaub) -
+                                             KM1_jumps*km1_f(midfail_times_postaub)/km1_f(fail_times_postaub))/km1_f(midfail_times_postaub)
+      )
+
+      cov_value_posttau =  (n1*sum(sum_part1) + n0*sum(sum_part2))/n
+
+    }
+
+  }
+  if(var_est=='Pooled'){
+    ############################################################################################
+    # Compute the covariate integral
+    # INTEGRAL PART 1: from tau0 to taub
+    ############################################################################################
+
+    # ESTIMATES' VALUES FOR INTEGRALS' COMPUTATION
+    ################################################
+    # Note that km0_f(midfail_times_pretaub) corresponds to Kaplan-Meier estimates' values at midpoints between event times (failure and censoring times)
+    # Note that km0_f(fail_times_pretaub) corresponds to Kaplan-Meier estimates' values at event times (failure and censoring times)
+    # Analogously with km1_f(), kmp_f(), censkm0_f(), censkm1_f(), ...
+
+    # Hazards
+    # version with kernel
+    hazard1X_values <- hazard1X_f(fail_times_pretaub)
+    hazard0X_values <- hazard0X_f(fail_times_pretaub)
+    # hazardpX_values <- hazardpX_f(fail_times_pretaub)
+
+    # Compute the weight function
+    ######################################
+
+    # weight function proposed by Pepe-Fleming: w
+    w <- ifelse(censkm0_f(midfail_times_pretaub)+censkm1_f(midfail_times_pretaub) == 0,
+                0,
+                (n*censkm0_f(midfail_times_pretaub)*censkm1_f(midfail_times_pretaub))/(n0*censkm0_f(midfail_times_pretaub)+n1*censkm1_f(midfail_times_pretaub))
     )
+    # weight function proposed by Fleming-Harrington: f^rho*(1-f)^gam
+    f <- kmp_f(midfail_times_pretaub)
+    # Define the weight function as a product of w and f
+    weight <- w^(eta)*f^rho*(1-f)^gam
 
-    sum_part2 = ifelse(km1x_f(fail_times_postaub)*km1_f(fail_times_postaub)*km1_f(midfail_times_postaub) == 0,
-                       0,
-                       Int1*phat_group1*(KM1x_jumps*km1x_f(midfail_times_postaub)/km1x_f(fail_times_postaub) -
-                                           KM1_jumps*km1_f(midfail_times_postaub)/km1_f(fail_times_postaub))/km1_f(midfail_times_postaub)
-    )
+    # Kaplan-Meier jumps
+    KMp_jumps <- diff(c(1,kmp_f(fail_times_pretaub)))
 
-    cov_value_posttau =  (n1*sum(sum_part1) + n0*sum(sum_part2))/n
+    # Calculate the integral: int_{t,tau}(weight * surv)
+    Integralp <- cumsum(diff(c(0, fail_times_pretaub)) * weight * kmp_f(fail_times_pretaub))
+    Intp <- (Integralp[l_pretaub] - Integralp)
 
+    # Calculate the integral 1A
+    integral1A = -sum(Intp*(n1*hazard0X_values/n+n0*hazard1X_values/n)*diff(c(0, fail_times_pretaub)),na.rm = TRUE)
+
+    # Calculate the integral 1B
+    integral1B = -sum(Intp*phat_groupp*KMp_jumps/kmp_f(fail_times_pretaub),na.rm = TRUE)
+
+    # Calculate the integral part 1
+    cov_value_pretaub =  integral1A + integral1B
+
+    ############################################################################################
+    # Compute the covariate integral
+    # INTEGRAL 2: from taub to tau
+    ############################################################################################
+    cov_value_posttau = 0
+    if(taub<tau){
+      # Compute the weight function
+      ######################################
+      # weight function proposed by Pepe-Fleming
+      w <- ifelse(censkm0_f(midfail_times_postaub)+censkm1_f(midfail_times_postaub) == 0,
+                  0,
+                  (n*censkm0_f(midfail_times_postaub)*censkm1_f(midfail_times_postaub))/(n0*censkm0_f(midfail_times_postaub) + n1*censkm1_f(midfail_times_postaub)))
+      # weight function proposed by Fleming-Harrington
+      f <- kmp_f(midfail_times_postaub)
+      # Define the weight function as a product of w and f
+      weight <- w^(eta)*f^rho*(1-f)^gam
+
+      # Compute the Kaplan-Meier jumps
+      ######################################
+      # Kaplan-Meier jumps
+      KMp_jumps <- diff(c(1,kmp_f(fail_times_postaub)))
+
+      # Kaplan-Meier responders
+      # group 0
+      KM0x_jumps <- diff(c(1,km0x_f(fail_times_postaub)))
+      # group 1
+      KM1x_jumps <- diff(c(1,km1x_f(fail_times_postaub)))
+
+      # Calculate the integral: int_{t,tau}(weight * surv)
+      Integralp <- cumsum(diff(c(0, fail_times_postaub)) * weight * kmp_f(fail_times_postaub))
+      Intp <- (Integralp[l_postaub] - Integralp)
+
+      # Calculate the integral
+
+      sum_part = ifelse(km1x_f(fail_times_postaub)*km0x_f(fail_times_postaub)*kmp_f(fail_times_postaub)*kmp_f(midfail_times_postaub) == 0,
+                        0,
+                        Intp*phat_groupp*(n0*KM1x_jumps*km1x_f(midfail_times_postaub)/km1x_f(fail_times_postaub)/n+
+                                            n1*KM0x_jumps*km0x_f(midfail_times_postaub)/km0x_f(fail_times_postaub)/n-
+                                            KMp_jumps*kmp_f(midfail_times_postaub)/kmp_f(fail_times_postaub))/kmp_f(midfail_times_postaub)
+      )
+
+      cov_value_posttau =  sum(sum_part,na.rm = T)
+
+    }
   }
 
   ############################################################################################

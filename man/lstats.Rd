@@ -4,8 +4,21 @@
 \alias{lstats}
 \title{L-Statistics for binary and time-to-event outcomes}
 \usage{
-lstats(time, status, binary, treat, tau0 = 0, tau = NULL,
-  taub = NULL, rho = 0, gam = 0, eta = 1, wb = 0.5, ws = 0.5)
+lstats(
+  time,
+  status,
+  binary,
+  treat,
+  tau0 = 0,
+  tau = NULL,
+  taub = NULL,
+  rho = 0,
+  gam = 0,
+  eta = 1,
+  wb = 0.5,
+  ws = 0.5,
+  var_est = "Unpooled"
+)
 }
 \arguments{
 \item{time}{The observed time.}
@@ -31,6 +44,8 @@ lstats(time, status, binary, treat, tau0 = 0, tau = NULL,
 \item{wb}{A scalar parameter that controls the type of test (see Weights).}
 
 \item{ws}{A scalar parameter that controls the type of test (see Weights).}
+
+\item{var_est}{indicates the variance estimate to use ('Pooled' or 'Unpooled')}
 }
 \value{
 List: standardized statistic, statistic and variance.
