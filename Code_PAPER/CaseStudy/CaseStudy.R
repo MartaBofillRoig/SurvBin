@@ -1,0 +1,83 @@
+
+setwd("C:/Users/Marta.Bofill/Desktop/Code_PAPER/CaseStudy")
+load("C:/Users/Marta.Bofill/Desktop/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
+
+set.seed(2020)
+
+n0=dim(pbo_IPD)[1]
+n1=dim(trt_IPD)[1]
+
+prob1 = 5.7/100
+prob0 = 1.5/100
+
+v0 = runif(n=n0)
+v1 = runif(n=n1)
+
+BE0 = ifelse(v0<prob0, 1, 0)
+BE1 = ifelse(v1<prob1, 1, 0)
+
+trt_data = data.frame(treat=trt_IPD$arm, time=trt_IPD$time, status=trt_IPD$status, binary = BE1)
+tbo_data = data.frame(treat=pbo_IPD$arm, time=pbo_IPD$time, status=pbo_IPD$status, binary = BE0)
+
+data = rbind(trt_data, tbo_data)
+head(data)
+
+######################################
+
+sum(subset(data, data$treat==1)$binary)/n1
+sum(subset(data, data$treat==0)$binary)/n0 
+
+######################################
+# PLOTS KAPLAN-MEIER ESTIMATORS
+######################################  
+library(rms) 
+windows()
+fit.rms <- npsurv(survival::Surv(time, status) ~ arm, data=recon_IPD)
+survplot(fit  = fit.rms,
+         conf = c("none","bands","bars")[2],
+         xlab = "Time in years", ylab = "Overall Survival",
+         xlim=c(0,5),
+         # label.curves = TRUE,                     # label curves directly
+         label.curves = list(keys = "lines"),  # legend instead of direct label
+         levels.only  = FALSE,                    # show only levels, no label
+         abbrev.label = FALSE,                    # if label used, abbreviate
+         ## fun = function(x) {1 - x},            # Cumulative probability plot         
+         loglog   = FALSE,                        # log(-log Survival) plot
+         logt     = FALSE,                        # log time
+         time.inc = 1,                          # time increment
+         dots     = TRUE,                         # dot grid
+         n.risk   = TRUE,                          # show number at risk
+         cex.n.risk=0.7,
+         col=c("coral1","chartreuse4"),lwd=2,lty=1,legend.pos = "topright" 
+)
+
+######################################
+
+
+
+# Functions for the binary and survival setting; for the covariance computation; and for simulating the binary and time-to-event data
+source('C:/Users/Marta.Bofill/Desktop/Code_PAPER/Functions/binary-functions.R')
+source('C:/Users/Marta.Bofill/Desktop/Code_PAPER/Functions/survival-functions.R') 
+source('C:/Users/Marta.Bofill/Desktop/Code_PAPER/Functions/cov-functions.R') 
+source('C:/Users/Marta.Bofill/Desktop/Code_PAPER/Functions/lstats-functions.R') 
+
+require(zoo)
+require(survival)
+require(muhaz) 
+
+B <- bintest(binary=data$binary, treat=data$treat, var_est = "Pooled")
+B[1]
+
+S <- survtest(time=data$time, status=data$status, treat=data$treat, tau=4, rho=0, gam=1, eta=1, var_est = "Pooled")
+S[1]
+
+sigma_sb <- survbinCov(time=data$time, status=data$status, binary=data$binary, treat=data$treat, tau0=0, tau=4, taub=0.5, rho=0, gam=1, eta=1, var_est = "Pooled")
+sigma_sb
+
+z_sb = lstats(time=data$time, status=data$status, binary=data$binary, treat=data$treat, tau0=0, tau=4, taub=0.5, rho=0, gam=1, eta=1, wb=0.25, ws=0.75, var_est = "Pooled")
+z_sb[1]
+
+# Unpooled version
+# z_sb = lstats(time=data$time, status=data$status, binary=data$binary, treat=data$treat, tau0=0, tau=4, taub=0.5, rho=0, gam=1, eta=1, wb=0.25, ws=0.75, var_est = "Unpooled")
+# z_sb[1]
+
