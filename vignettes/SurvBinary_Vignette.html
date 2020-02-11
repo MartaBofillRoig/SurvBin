@@ -316,7 +316,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </ul>
 </div>
 
-<p>This report describes the R Code for the preprint <em>A general class of two-sample statistics for binary and time-to-event outcomes</em>. Available at: <a href="https://arxiv.org/abs/2002.01369">LINK-ARXIV</a></p>
+<p>This report describes the R Code for the preprint <em>A general class of two-sample statistics for binary and time-to-event outcomes</em>. Available at: <a href="https://arxiv.org/abs/2002.01369">https://arxiv.org/abs/2002.01369</a></p>
 <div id="prelude" class="section level2">
 <h2>Prelude</h2>
 <p>Package dependences:</p>
@@ -328,7 +328,15 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <a class="sourceLine" id="cb1-6" title="6"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb1-7" title="7"><span class="co">#&gt;     as.Date, as.Date.numeric</span></a>
 <a class="sourceLine" id="cb1-8" title="8"><span class="kw">library</span>(muhaz)</a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="kw">library</span>(copula)</a></code></pre></div>
+<a class="sourceLine" id="cb1-9" title="9"><span class="kw">library</span>(copula)</a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="kw">library</span>(devtools)</a>
+<a class="sourceLine" id="cb1-11" title="11"><span class="co">#&gt; Loading required package: usethis</span></a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="kw">install_github</span>(<span class="st">&quot;MartaBofillRoig/SurvBin&quot;</span>)</a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="co">#&gt; </span><span class="al">WARNING</span><span class="co">: Rtools is required to build R packages, but is not currently installed.</span></a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="co">#&gt; </span></a>
+<a class="sourceLine" id="cb1-15" title="15"><span class="co">#&gt; Please download and install Rtools custom from http://cran.r-project.org/bin/windows/Rtools/.</span></a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="co">#&gt; Skipping install of &#39;SurvBin&#39; from a github remote, the SHA1 (517d8958) has not changed since last install.</span></a>
+<a class="sourceLine" id="cb1-17" title="17"><span class="co">#&gt;   Use `force = TRUE` to force installation</span></a></code></pre></div>
 </div>
 <div id="functions" class="section level2">
 <h2>Functions</h2>
@@ -347,6 +355,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <li>gamma: A scalar parameter that controls the type of test (see Details).</li>
 <li>eta: A scalar parameter that controls the type of test (see Details).</li>
 <li>gamma: A scalar parameter that controls the type of test (see Details).</li>
+<li>var_est: indicates the variance estimate to use (‘Pooled’ or ‘Unpooled’).</li>
 </ul>
 <p>Details:</p>
 <p>Th L-statistics are defined as a weighted linear combination of the difference of proportions statistic for the binary outcome
@@ -373,7 +382,7 @@ denoting by <span class="math inline">\(\hat{p}^{(i)}(\tau_b)\)</span> the estim
 for <span class="math inline">\(\eta,\rho,\gamma\geq0\)</span>, and where:
 <span class="math display">\[\hat{w}(t) = \frac{n\hat{C}^{(0)}(t-)\hat{C}^{(1)}(t-)}{n^{(0)}\hat{C}^{(0)}(t-)+n^{(1)}\hat{C}^{(1)}(t-)}\]</span>
 is the weight proposed by Pepe-Fleming (Biometrics ,1989).</p>
-<p>More details can be found in the corresponding pre-print.</p>
+<p>More details can be found in the corresponding pre-print <a href="https://arxiv.org/abs/2002.01369">Link</a>.</p>
 </div>
 <div id="binary-statistic" class="section level3">
 <h3>Binary statistic</h3>
@@ -382,14 +391,14 @@ is the weight proposed by Pepe-Fleming (Biometrics ,1989).</p>
 <ul>
 <li>binary: 0=nonresponse, 1=response.</li>
 <li>treat: The treatment-group indicator, normally 0=control, 1=intervention.</li>
-<li>variance estimator: Unpooled/Pooled</li>
+<li>var_est: indicates the variance estimate to use (‘Pooled’ or ‘Unpooled’).</li>
 </ul>
 <p>Details:</p>
 <p>The statistic used is:
 <span class="math display">\[\begin{eqnarray} 
     \frac{U_{b,n}\left(\tau_b\right)}{\hat{\sigma}_b} &amp;=&amp; \frac{\sqrt{\frac{n^{(0)}n^{(1)}}{n}} \left(\hat{p}^{(1)}\left(\tau_b\right)  -  \hat{p}^{(0)}\left(\tau_b\right)\right)}{\sqrt{\hat{p}(\tau_b)\cdot\left( 1-\hat{p}(\tau_b)\right)}} 
 \end{eqnarray}\]</span></p>
-<p>More details can be found in the corresponding pre-print.</p>
+<p>More details can be found in the corresponding pre-print <a href="https://arxiv.org/abs/2002.01369">Link</a>.</p>
 </div>
 <div id="time-to-event-statistic" class="section level3">
 <h3>Time-to-event statistic</h3>
@@ -402,6 +411,7 @@ is the weight proposed by Pepe-Fleming (Biometrics ,1989).</p>
 <li>tau: follow-up. Default NULL denoting the last time in which both groups had patients at risk.</li>
 <li>rho: A scalar parameter that controls the type of test (see Weights).</li>
 <li>gamma: A scalar parameter that controls the type of test (see Weights).</li>
+<li>var_est: indicates the variance estimate to use (‘Pooled’ or ‘Unpooled’).</li>
 </ul>
 <p>Details:</p>
 <p>The statistic used is:
@@ -429,33 +439,18 @@ For more information on the weight function <span class="math inline">\(\hat{Q}(
 <p>Details:</p>
 <p>These functions return an estimation of <span class="math inline">\(\mathrm{Cov}(U_{b,n}, U_{s,n}(Q))\)</span> given by:</p>
 <p><span class="math display">\[\begin{eqnarray*}  
-\hat{Cov} &amp;=&amp; \sum_{i=0,1} \frac{n-n^{(i)}}{n} \left( 
-    \int_{\tau_0}^{\tau_b}   \frac{\int_{s}^{\tau} \hat{Q}(t) \hat{S}^{(i)}(t)dt}{\hat{S}^{(i)}(s)} \cdot \left(\hat{p}_N^{(i)}(s)-\hat{p}^{(i)}  \right) d\hat{S}^{(i)}(s) \right. \\
-    &amp;&amp; \left. + \int_{\tau_b}^{\tau}
-    \frac{\hat{p}^{(i)} \cdot \int_{s}^{\tau} \hat{Q}(t) \hat{S}^{(i)}(t)dt }{\hat{S}^{(i)}(s) }\left( d\hat{S}_X^{(i)}(s) -d\hat{S}^{(i)}(s)\right) \right)  
-\end{eqnarray*}\]</span></p>
-<p>The difference between these two functions is that we use different methods for estimating <span class="math inline">\(p_N^{(i)}(s)\)</span>:</p>
-<ul>
-<li><p>Function <code>survbinCov()</code>: The estimation is made by using the plug-in estimation:
-<span class="math display">\[\begin{eqnarray*}  
-    \hat{p}_N^{(i)}(t) &amp;=&amp; \displaystyle \sum_{j=1,...,n^{(i)}} \frac{ I\{X_{ij}=1, dN_{ij}(t)=1 \}}{d\bar{N}^{(i)}(t)} =  \frac{\sum_{j=1,...,n^{(i)}} I\{X_{ij}=1, dN_{ij}(t)=1 \}}{\sum_{j=1,...,n^{(i)}} I\{dN_{ij}(t)=1 \}}
-\end{eqnarray*}\]</span></p></li>
-<li><p>Function <code>survbinCov_kernel()</code>: The estimation is made by using smoothing estimating methods. We first notice that:
-<span class="math display">\[\begin{eqnarray*}  
-      \mathrm{E}(X_{ij} dN_{j}^{(i)}(t)) &amp;=&amp; \mathrm{E}(X_{ij}Y_{j}^{(i)}(t)\lambda_X^{(i)}(t)dt) = \mathrm{E}(X_{ij}Y_{j}^{(i)}(t))\lambda_X^{(i)}(t)dt 
-  \end{eqnarray*}\]</span>
-Then:
-<span class="math display">\[\begin{eqnarray*}  
-      p_N^{(i)}(t)=P(X_{ij}=1| dN_{ij}(t)=1) &amp;=&amp; \frac{\mathrm{P}(X_{ij} \cdot dN_{ij}(t)=1)}{\mathrm{P}(dN_{ij}(t)=1)} = \frac{\mathrm{E}(X_{ij}Y_{j}^{(i)}(t))\lambda_X^{(i)}(t)dt }{\mathrm{E}(Y_{j}^{(i)}(t))\lambda^{(i)}(t)dt } \\
-      &amp;=&amp; \frac{\mathrm{P}(X_{ij}Y_{j}^{(i)}(t)=1)\lambda_X^{(i)}(t)dt }{\mathrm{P}(Y_{j}^{(i)}(t)=1)\lambda^{(i)}(t)dt } 
-\end{eqnarray*}\]</span>
-We estimate the last expression as:
-<span class="math display">\[\begin{eqnarray*}  
-      \hat{p}_N^{(i)}(t)=  \frac{\sum_{j=1,...,n^{(i)}}I\{X_{ij}Y_{j}^{(i)}(t)=1\}\hat{\lambda}_X^{(i)}(t)  }{\sum_{j=1,...,n^{(i)}}I\{Y_{j}^{(i)}(t)=1\}\hat{\lambda}^{(i)}(t)  } 
-\end{eqnarray*}\]</span>
-where the hazard functions <span class="math inline">\(\hat{\lambda}_X^{(i)}(t)\)</span> and <span class="math inline">\(\hat{\lambda}^{(i)}(t)\)</span> are estimated by kernel smoothing methods (<code>R</code> package <code>muhaz</code>).</p></li>
-</ul>
-<p>More details can be found in the corresponding pre-print.</p>
+        \hat{Cov}  &amp;=&amp;  
+        -  \int_{\tau_0}^{\tau_b} \hspace{-1mm} \hat{K}_{\tau_b}(t) 
+        \left( 
+        \sum_{i=0,1} \hspace{-1mm}\frac{n-n^{(i)}}{n} \cdot \hat{\lambda}_{X,T}^{(i)}(t)dt+ \frac{\hat{p}\left(\tau_b\right) \cdot d\hat{S}(t) }{\hat{S}(t)} \right)  
+        \nonumber\\
+        &amp;&amp; +  \int_{\tau_b}^{\tau}  
+        \frac{\hat{K}_{\tau}(t) \cdot\hat{p}\left(\tau_b\right)}{\hat{S}(t-) }  \left( - \frac{\hat{S}(t-) \cdot d\hat{S}(t)}{\hat{S}(t)} 
+        + \sum_{i=0,1} \frac{n-n^{(i)}}{n} \cdot \frac{\hat{S}_X^{(i)}(t-)\cdot d\hat{S}_X^{(i)}(t)}{\hat{S}_X^{(i)}(t)} 
+        \right)  
+\end{eqnarray*}\]</span><br />
+where the hazard functions <span class="math inline">\(\hat{\lambda}_{X,T}^{(i)}(t)\)</span> is the estimator of <span class="math inline">\(\lambda_{X,T}^{(i)}(t) = \lim_{dt\rightarrow0} P(X_{ij}=1, t\leq T_{ij} &lt; t +dt |T_{ij}&gt;t)/dt\)</span> and is computed by means of kernel smoothing methods (<code>R</code> package <code>muhaz</code>).</p>
+<p>More details can be found in the corresponding pre-print <a href="https://arxiv.org/abs/2002.01369">Link</a>.</p>
 </div>
 </div>
 <div class="footnotes">

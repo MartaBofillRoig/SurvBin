@@ -19,10 +19,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 knitr::opts_chunk$set(echo = TRUE) 
-
-
-library(devtools)
-install_github("MartaBofillRoig/SurvBin")
 ``` 
 
 
@@ -36,6 +32,8 @@ library(survival)
 library(zoo)
 library(muhaz)
 library(copula)
+library(devtools)
+install_github("MartaBofillRoig/SurvBin")
 ```
 
 ## Functions 
@@ -56,6 +54,7 @@ Arguments:
   - gamma: A scalar parameter that controls the type of test (see Details).
   - eta: A scalar parameter that controls the type of test (see Details).
   - gamma: A scalar parameter that controls the type of test (see Details).
+  - var_est: indicates the variance estimate to use ('Pooled' or 'Unpooled').
 
 Details:
 
@@ -96,7 +95,7 @@ Arguments:
 
 - binary: 0=nonresponse, 1=response. 
 - treat: The treatment-group indicator, normally 0=control, 1=intervention.
-- variance estimator: Unpooled/Pooled
+- var_est: indicates the variance estimate to use ('Pooled' or 'Unpooled').
 
 Details:
 
@@ -105,7 +104,7 @@ The statistic used is:
 	\frac{U_{b,n}\left(\tau_b\right)}{\hat{\sigma}_b} &=& \frac{\sqrt{\frac{n^{(0)}n^{(1)}}{n}} \left(\hat{p}^{(1)}\left(\tau_b\right)  -  \hat{p}^{(0)}\left(\tau_b\right)\right)}{\sqrt{\hat{p}(\tau_b)\cdot\left( 1-\hat{p}(\tau_b)\right)}} 
 \end{eqnarray} 
 
-More details can be found in the corresponding pre-print [Link](https://arxiv.org/abs/2002.01369)..
+More details can be found in the corresponding pre-print [Link](https://arxiv.org/abs/2002.01369).
 
 ### Time-to-event statistic 
 
@@ -119,7 +118,7 @@ Arguments:
 - tau: follow-up. Default NULL denoting the last time in which both groups had patients at risk.
 - rho: A scalar parameter that controls the type of test (see Weights).
 - gamma: A scalar parameter that controls the type of test (see Weights).
-
+- var_est: indicates the variance estimate to use ('Pooled' or 'Unpooled').
 
 Details:
 
@@ -147,39 +146,24 @@ Arguments:
   - gamma: A scalar parameter that controls the type of test (see Details in function `lstats()`).
   - eta: A scalar parameter that controls the type of test (see Details in function `lstats()`).
   - gamma: A scalar parameter that controls the type of test (see Details in function `lstats()`).
+  
 
 Details:
 
 These functions return an estimation of $\mathrm{Cov}(U_{b,n}, U_{s,n}(Q))$ given by:
 
 \begin{eqnarray*}  
-\hat{Cov} &=& \sum_{i=0,1} \frac{n-n^{(i)}}{n} \left( 
-    \int_{\tau_0}^{\tau_b}   \frac{\int_{s}^{\tau} \hat{Q}(t) \hat{S}^{(i)}(t)dt}{\hat{S}^{(i)}(s)} \cdot \left(\hat{p}_N^{(i)}(s)-\hat{p}^{(i)}  \right) d\hat{S}^{(i)}(s) \right. \\
-    && \left. + \int_{\tau_b}^{\tau}
-    \frac{\hat{p}^{(i)} \cdot \int_{s}^{\tau} \hat{Q}(t) \hat{S}^{(i)}(t)dt }{\hat{S}^{(i)}(s) }\left( d\hat{S}_X^{(i)}(s) -d\hat{S}^{(i)}(s)\right) \right)  
-\end{eqnarray*}
+		\hat{Cov}  &=&  
+		-  \int_{\tau_0}^{\tau_b} \hspace{-1mm} \hat{K}_{\tau_b}(t) 
+		\left( 
+		\sum_{i=0,1} \hspace{-1mm}\frac{n-n^{(i)}}{n} \cdot \hat{\lambda}_{X,T}^{(i)}(t)dt+ \frac{\hat{p}\left(\tau_b\right) \cdot d\hat{S}(t) }{\hat{S}(t)} \right)  
+		\nonumber\\
+		&& +  \int_{\tau_b}^{\tau}  
+		\frac{\hat{K}_{\tau}(t) \cdot\hat{p}\left(\tau_b\right)}{\hat{S}(t-) }  \left( - \frac{\hat{S}(t-) \cdot d\hat{S}(t)}{\hat{S}(t)} 
+		+ \sum_{i=0,1} \frac{n-n^{(i)}}{n} \cdot \frac{\hat{S}_X^{(i)}(t-)\cdot d\hat{S}_X^{(i)}(t)}{\hat{S}_X^{(i)}(t)} 
+		\right)  
+\end{eqnarray*}  
+where the hazard functions $\hat{\lambda}_{X,T}^{(i)}(t)$  is the estimator of 	$\lambda_{X,T}^{(i)}(t) = \lim_{dt\rightarrow0} P(X_{ij}=1, t\leq T_{ij} < t +dt |T_{ij}>t)/dt$ and  is computed by means of kernel smoothing methods (`R` package `muhaz`).
 
-The difference between these two functions is that we use different methods for estimating $p_N^{(i)}(s)$:
-
-  - Function `survbinCov()`: The estimation is made by using the plug-in estimation:
-  \begin{eqnarray*}  
-  		\hat{p}_N^{(i)}(t) &=& \displaystyle \sum_{j=1,...,n^{(i)}} \frac{ I\{X_{ij}=1, dN_{ij}(t)=1 \}}{d\bar{N}^{(i)}(t)} =  \frac{\sum_{j=1,...,n^{(i)}} I\{X_{ij}=1, dN_{ij}(t)=1 \}}{\sum_{j=1,...,n^{(i)}} I\{dN_{ij}(t)=1 \}}
-  	\end{eqnarray*} 
-  	
-- Function `survbinCov_kernel()`: The estimation is made by using smoothing estimating methods. We first notice that:
-  \begin{eqnarray*}  
-  		\mathrm{E}(X_{ij} dN_{j}^{(i)}(t)) &=& \mathrm{E}(X_{ij}Y_{j}^{(i)}(t)\lambda_X^{(i)}(t)dt) = \mathrm{E}(X_{ij}Y_{j}^{(i)}(t))\lambda_X^{(i)}(t)dt 
-  	\end{eqnarray*} 
-Then:
-\begin{eqnarray*}  
-  		p_N^{(i)}(t)=P(X_{ij}=1| dN_{ij}(t)=1) &=& \frac{\mathrm{P}(X_{ij} \cdot dN_{ij}(t)=1)}{\mathrm{P}(dN_{ij}(t)=1)} = \frac{\mathrm{E}(X_{ij}Y_{j}^{(i)}(t))\lambda_X^{(i)}(t)dt }{\mathrm{E}(Y_{j}^{(i)}(t))\lambda^{(i)}(t)dt } \\
-  		&=& \frac{\mathrm{P}(X_{ij}Y_{j}^{(i)}(t)=1)\lambda_X^{(i)}(t)dt }{\mathrm{P}(Y_{j}^{(i)}(t)=1)\lambda^{(i)}(t)dt } 
-\end{eqnarray*}
-We estimate the last expression as:
-\begin{eqnarray*}  
-  		\hat{p}_N^{(i)}(t)=  \frac{\sum_{j=1,...,n^{(i)}}I\{X_{ij}Y_{j}^{(i)}(t)=1\}\hat{\lambda}_X^{(i)}(t)  }{\sum_{j=1,...,n^{(i)}}I\{Y_{j}^{(i)}(t)=1\}\hat{\lambda}^{(i)}(t)  } 
-\end{eqnarray*}
-where the hazard functions $\hat{\lambda}_X^{(i)}(t)$ and  $\hat{\lambda}^{(i)}(t)$ are estimated by kernel smoothing methods (`R` package `muhaz`).
-
-More details can be found in the corresponding pre-print [Link](https://arxiv.org/abs/2002.01369)..
+More details can be found in the corresponding pre-print [Link](https://arxiv.org/abs/2002.01369).
 
