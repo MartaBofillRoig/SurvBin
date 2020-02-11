@@ -146,7 +146,7 @@ Arguments:
   - gamma: A scalar parameter that controls the type of test (see Details in function `lstats()`).
   - eta: A scalar parameter that controls the type of test (see Details in function `lstats()`).
   - gamma: A scalar parameter that controls the type of test (see Details in function `lstats()`).
-  
+  - var_est: indicates the variance estimate to use ('Pooled' or 'Unpooled').
 
 Details:
 
