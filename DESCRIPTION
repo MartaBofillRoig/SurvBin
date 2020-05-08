@@ -1,8 +1,7 @@
 Package: SurvBin
 Title: Two-sample statistics for binary and time-to-event outcomes
 Version: 0.0.0.9000
-Authors@R: c(person("Marta", "Bofill Roig", email = "marta.bofill.roig@upc.edu", role = c("cre","aut"),
-           email = "marta.bofill.roig@upc.edu",
+Authors@R: c(person("Marta", "Bofill Roig", email = "marta.bofill.roig@upc.edu", role = c("cre","aut"), 
            comment = c(ORCID = "0000-0002-4400-7541")), 
   	  person("Guadalupe", "Gomez Melis", role = "ctb")) 
 Author: Marta Bofill Roig [aut, cre], Guadalupe Gomez Melis [ctb]
