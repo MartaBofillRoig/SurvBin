@@ -113,15 +113,15 @@ fCS.TEST_Bonf <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, cens
 ##################################################################################
 
 fCS.TEST_s <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp", tau, taub, rho, gam, eta, wb, ws, var_est='Unpooled'){
-  
+
   # TWO-SAMPLE db
   ######################################
   db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
-  
+
   # STATISTICS
   ######################################
-  S <- survtest(db$time, db$status, db$treat, tau, rho, gam, eta, var_est) 
-  
+  S <- survtest(db$time, db$status, db$treat, tau, rho, gam, eta, var_est)
+
   return(S[1])
 }
 
@@ -129,14 +129,14 @@ fCS.TEST_s <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censori
 ##################################################################################
 
 fCS.TEST_b <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp", tau, taub, rho, gam, eta, wb, ws, var_est="Unpooled"){
-  
+
   # TWO-SAMPLE db
   ######################################
   db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
-  
+
   # STATISTICS
   ######################################
   B <- bintest(db$binary, db$treat, var_est)
-  
+
   return(B[1])
 }
