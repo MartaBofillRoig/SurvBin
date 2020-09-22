@@ -1,0 +1,262 @@
+---
+title: "Design Simulation Study"
+author: "Marta Bofill Roig and Guadalupe Gomez Melis"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(survival)
+library(survminer)
+
+set.seed(54321)
+```
+
+## Goal
+
+We design a simulation study for survival and binary data, according to two different cases:
+
+  - Under Cox proportional hazards (PH) model 
+  - Under Cox non-proportional hazards (non-PH) model 
+
+## Under PH model
+
+### Univariate simulation (only survival data)
+
+Suppose that we want to generate survival times following a specific Cox model. Suppose that the distribution used for the survival times under the control group is the Weibull distribution.
+$$
+      S_{a,b}(t) = e^{-(t/b)^a}, \ t \geq 0
+$$
+whereas the censoring distributions between groups were equal and exponential $Exp(\lambda=1)$. 
+
+We follow the techniques presented in:
+
+  - Bender R, Augustin T, Blettner M. _Generating survival times to simulate Cox proportional hazards models_. Statistics in Medicine. 2005.
+
+
+
+Therefore, if $T_0 \sim Weibull(a,b)$, then to obtain PH between groups according to HR we should simulate 
+$$T_1 \sim \left( -\frac{\log(U)}{(1/b)^a*HR} \right)^{1/a}$$ 
+Here $U$ is a variable following a uniform distribution on the interval from 0 to 1. Note that if we replace $HR$ with $1$, we simulate $Weibull(a,b)$. 
+
+#### Example
+
+Control group:
+```{r}
+a=2;b=2;tau=2;n0=1000;n1=1000;HR=0.75;H0=F
+
+TE0 = rweibull(n0,a,b)
+TC0 = runif(n1,0,tau)
+time0 = ifelse(TE0<=TC0,TE0,TC0)
+status0 = ifelse(TE0<=TC0 & TE0<tau,1,0)
+treat0 = rep(0,n1)
+sim0 <- data.frame(time0,status0,treat0)
+```
+
+Treatment group:
+```{r}
+if(H0==TRUE){
+  TE1 = rweibull(n1,a,b)
+}else{ 
+  lambda=(1/b)^a
+  rho=a 
+  v <- runif(n=n1)
+  TE1 <- (- log(v)/(lambda*HR))^(1/rho) 
+}
+
+TC1 = runif(n1, 0,tau)
+time1 = ifelse(TE1<=TC1,TE1,TC1)
+status1 = ifelse(TE1<=TC1 & TE1<tau,1,0)
+treat1 = rep(1,n1)
+
+sim1 <- data.frame(time1,status1,treat1) 
+```
+Two-sample data:
+```{r} 
+data = data.frame(time=c(sim1$time1,sim0$time0), 
+                  status=c(sim1$status1,sim0$status0),
+                  treat=c(sim1$treat1,sim0$treat0))
+```
+
+Kaplan-Meier curves:
+```{r,fig.height=8,fig.width=8}
+sf.twogroups <- survfit(Surv(time=time,event=status)~treat, data)
+ggsurvplot(
+  sf.twogroups,            # survfit object with calculated statistics.
+  data = data,             # data used to fit survival curves.
+  risk.table = TRUE,       # show risk table.
+  pval = TRUE,             # show p-value of log-rank test.
+  conf.int = TRUE,         # show confidence intervals for point estimates of survival curves.  
+  xlab = "Time",   # customize X axis label.
+  # break.time.by = 100,     # break X axis in time intervals by 500.
+  ggtheme = theme_light(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations in legend of risk table.
+  ncensor.plot = TRUE,      # plot the number of censored subjects at time t
+  ncensor.plot.height = 0.25,
+  conf.int.style = "step",  # customize style of confidence intervals
+  surv.median.line = "hv",   # add the median survival pointer
+  title    = "Survival function"
+) 
+```
+
+Estimation HR via Cox model:
+```{r}
+coxph(Surv(time, status) ~ treat, data) 
+```
+
+
+### Bivariate simulation (survival and binary data)
+
+We simulate survival and binary data using copulas.
+
+We simulate a sample of uniform...
+
+Then we transform the variables so that: ...
+
+```{r}
+library(copula)
+
+set.seed(321)
+# PARAMETERS
+######################################
+H0=FALSE
+# H0=FALSE
+a=0.5;b=1;tau0=0;tau=3;n0=1000; HR=0.65;n1=1000;
+# tstar= 0.3
+# p=0.2 
+# p: proportion of subjects who will survive beyond tstar
+# tstar: treatment delayed duration since randomiation
+
+p1=(1+22)/403
+p0=0.1
+
+# p1=0.01
+# p0=0.05
+
+######################################
+# RE-PARAMETRIZATION for time-to-event simulation
+lambda=(1/b)^a
+rho=a 
+
+######################################
+######################################
+
+
+# Copula for binary and time-to-event
+######################################
+# Select the copula
+cp <- claytonCopula(param = c(0.5), dim = 2)
+# cp <- frankCopula(param = c(2), dim = 2)
+
+# Generate the multivariate distribution with normal and t marginals
+copulaSB <- mvdc(copula = cp,
+                          margins = c("unif", "unif"),
+                          paramMargins = list(list(0,1),
+                                              list(0,1))) 
+
+# TREATMENT GROUP
+###################################### 
+v = rMvdc(n1,copulaSB)
+BE0 = ifelse(v[,2]<p1, 1, 0)
+TE0 = (-log(v[,1])/(lambda))^(1/rho) 
+# TE0 = TE0+tau0 
+# TC0 = rexp(n=n1, rate = 1)
+TC0 = runif(n0, 0,tau)
+time0= ifelse(TE0<=TC0, TE0, TC0)
+status0 = ifelse(TE0<=TC0 & TE0<tau,1,0)
+treat0 = rep(0,n0)
+sim0 <- data.frame(BE0,time0,status0,treat0)
+
+# CONTROL GROUP
+###################################### 
+
+v = rMvdc(n0,copulaSB)
+if(H0==TRUE){
+  
+  BE1 = ifelse(v[,2]<p0, 1, 0)
+  TE1 = (-log(v[,1])/(lambda))^(1/rho) 
+  # TE1 =TE1+tau0 
+  
+}else{ 
+  
+  lambda=(1/b)^a
+  rho=a  
+  
+  TE1 <- (- log(v[,1])/(lambda*HR))^(1/rho) 
+  BE1 <-  ifelse(v[,2]<p0, 1, 0)
+  
+}
+
+TC1 =  runif(n1, 0,tau)
+time1 = ifelse(TE1<=TC1,TE1,TC1)
+status1 = ifelse(TE1<=TC1 & TE1<tau,1,0)
+treat1 = rep(1,n1)
+sim1 <- data.frame(BE1,time1,status1,treat1) 
+
+# TWO-SAMPLE DATA
+###################################### 
+data = data.frame(binary=c(sim1$BE1, sim0$BE0), time=c(sim1$time1,sim0$time0), status=c(sim1$status1,sim0$status0),treat=c(sim1$treat1,sim0$treat0))
+
+head(data)
+```
+
+
+```{r}
+sum(subset(data, data$treat==1)$binary)/n1
+sum(subset(data, data$treat==0)$binary)/n0
+coxph(Surv(time, status) ~ treat, data) 
+```
+
+
+Kaplan-Meier curves:
+```{r,fig.height=8,fig.width=8}
+sf.twogroups <- survfit(Surv(time=time,event=status)~treat, data)
+ggsurvplot(
+  sf.twogroups,            # survfit object with calculated statistics.
+  data = data,             # data used to fit survival curves.
+  risk.table = TRUE,       # show risk table.
+  pval = TRUE,             # show p-value of log-rank test.
+  conf.int = TRUE,         # show confidence intervals for point estimates of survival curves.  
+  xlab = "Time",   # customize X axis label.
+  # break.time.by = 100,     # break X axis in time intervals by 500.
+  ggtheme = theme_light(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations in legend of risk table.
+  ncensor.plot = TRUE,      # plot the number of censored subjects at time t
+  ncensor.plot.height = 0.25,
+  conf.int.style = "step",  # customize style of confidence intervals
+  surv.median.line = "hv",   # add the median survival pointer
+  title    = "Survival function"
+) 
+```
+
+
+Scenarios Simulation
+
+
+## Under non-PH model
+
+
+
+
+Then, in order to simulate delayed effects until $t_*$, we calculate for which values of the uniform we obtain times larger (smaller) than $t_*$.
+
+  - If $T>t_*$, then: $U<e^{-(1/b)^a   t_*^a }$
+  - If $T<t_*$, then: $U>e^{-(1/b)^a   t_*^a }$
+
+So that, we simulate $n_1 \cdot p$ subjects according to:
+$$T_1 \sim \left( -\frac{\log(U)}{(1/b)^a} \right)^{1/a}$$ 
+where $U\sim Uniform (e^{-(1/b)^a   t_*^a },1)$. While we simulate $n_1 \cdot (1-p)$ subjects using:
+$$T_1 \sim \left( -\frac{\log(U)}{(1/b)^a*HR} \right)^{1/a}$$ 
+where $U\sim Uniform (0,e^{-(1/b)^a   t_*^a })$.
