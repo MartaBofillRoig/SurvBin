@@ -102,10 +102,24 @@ survbinCov <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL,
   # db_aux=db
   # db_aux[which(db$status==1 & db$binary==0),]$status=0
   
-  fit <- muhaz(db1_aux$time,db1_aux$status)
-  hazard1X_f <- approxfun(fit$est.grid, fit$haz.est)
-  fit <- muhaz(db0_aux$time,db0_aux$status)
-  hazard0X_f <- approxfun(fit$est.grid, fit$haz.est)
+  # -- OLD VERSION 25/09
+  # fit <- muhaz(db1_aux$time,db1_aux$status)
+  # hazard1X_f <- approxfun(fit$est.grid, fit$haz.est)
+  # fit <- muhaz(db0_aux$time,db0_aux$status)
+  # hazard0X_f <- approxfun(fit$est.grid, fit$haz.est)
+  fit <- tryCatch(muhaz(db1_aux$time,db1_aux$status),error=function(e){NA})
+  if(class(fit)=="muhaz"){
+    hazard1X_f <- approxfun(fit$est.grid, fit$haz.est)
+  }else{
+    hazard1X_f <- function(x){0*x}
+  }
+  fit <- tryCatch(muhaz(db0_aux$time,db0_aux$status),error=function(e){NA}) 
+  if(class(fit)=="muhaz"){
+    hazard0X_f <- approxfun(fit$est.grid, fit$haz.est)
+  }else{
+    hazard0X_f <- function(x){0*x}
+  }
+  
 
   # fit <- muhaz(db_aux$time,db_aux$status)
   # hazardpX_f <- approxfun(fit$est.grid, fit$haz.est)
