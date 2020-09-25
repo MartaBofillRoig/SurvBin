@@ -14,8 +14,19 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
 library(survival)
 library(survminer)
+
+
+# Functions for the binary and survival setting; for the covariance computation; and for simulating the binary and time-to-event data
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/survival-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/cov-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/lstats_boots.R')
+
 
 set.seed(54321)
 ```
@@ -243,6 +254,19 @@ ggsurvplot(
 
 
 Scenarios Simulation
+
+
+```{r}
+# Parameters
+alpha=0.05;
+z.alpha <- qnorm(1-alpha,0,1)
+z.alphac <- qnorm(1-alpha/2,0,1)
+
+# nsim: number of simulations
+nsim=1000
+```
+
+
 
 
 ## Under non-PH model
