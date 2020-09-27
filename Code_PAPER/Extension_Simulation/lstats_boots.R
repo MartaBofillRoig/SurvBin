@@ -58,3 +58,19 @@ fCS.TEST_boots <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, cen
   return(TestBS[1])
 }
 
+
+##################################################################################
+
+fCS.TEST_boots_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par,  n0, n1, censoring="Exp", tau, taub, rho, gam, eta, wb, ws){
+
+  # TWO-SAMPLE db
+  ######################################
+  # db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
+  db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, H0=FALSE)
+
+  # STATISTICS
+  ######################################
+  TestBS = lstats_boots(db$time,db$status, db$binary, db$treat, tau0=0, tau, taub, rho, gam, eta, wb, ws)
+
+  return(TestBS[1])
+}

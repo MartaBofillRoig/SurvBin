@@ -76,7 +76,7 @@ simsurvbin <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censori
 
 ##################################################################################
 simsurvbin_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring="Exp", H0=FALSE){
-  
+
   # CENSORING
   ######################################
   if(censoring=="Exp"){
@@ -86,59 +86,60 @@ simsurvbin_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0,
   if(censoring=="Unif"){
     TC1 = runif(n= n1, min=0,max=rate.param)
     TC0 = runif(n= n0, min=0,max=rate.param)
-  } 
+  }
 
   # RE-PARAMETRIZATION for time-to-event simulation
   ######################################
   lambda=(1/b.scale)^a.shape
-  rho=a.shape 
-  
+  rho=a.shape
+
   # Copula for binary and time-to-event
   ######################################
   # Select the copula
   cp <- claytonCopula(param = c(0.5), dim = 2)
   # cp <- frankCopula(param = c(2), dim = 2)
-  
+
   # Generate the multivariate distribution
   copulaSB <- mvdc(copula = cp,
                    margins = c("unif", "unif"),
-                   paramMargins = list(list(0,1), list(0,1))) 
-  
+                   paramMargins = list(list(0,1), list(0,1)))
+
   # TREATMENT GROUP
-  ###################################### 
+  ######################################
   v = rMvdc(n1,copulaSB)
   BE0 = ifelse(v[,2]<p1, 1, 0)
-  TE0 = (-log(v[,1])/(lambda))^(1/rho) 
-  
+  TE0 = (-log(v[,1])/(lambda))^(1/rho)
+
   time0= ifelse(TE0<=TC0, TE0, TC0)
-  status0 = ifelse(TE0<=TC0 & TE0<tau,1,0)
-  treat0 = rep(0,n0) 
-  
+  # status0 = ifelse(TE0<=TC0 & TE0<tau,1,0)
+  status0 = ifelse(TE0<=TC0,1,0)
+  treat0 = rep(0,n0)
+
   # CONTROL GROUP
-  ###################################### 
-  
+  ######################################
+
   v = rMvdc(n1,copulaSB)
   if(H0==TRUE){
-    
+
     BE1 = ifelse(v[,2]<p0, 1, 0)
-    TE1 = (-log(v[,1])/(lambda))^(1/rho)  
-    
-  }else{ 
-    
-    TE1 <- (- log(v[,1])/(lambda*HR))^(1/rho) 
-    BE1 <-  ifelse(v[,2]<p0, 1, 0)
-    
+    TE1 = (-log(v[,1])/(lambda))^(1/rho)
+
+  }else{
+
+    BE1 <-  ifelse(v[,2]<p1, 1, 0)
+    TE1 <- (- log(v[,1])/(lambda*HR))^(1/rho)
   }
-  
+
   time1 = ifelse(TE1<=TC1,TE1,TC1)
-  status1 = ifelse(TE1<=TC1 & TE1<tau,1,0)
-  treat1 = rep(1,n1)  
-  
+  # status1 = ifelse(TE1<=TC1 & TE1<tau,1,0)
+  status1 = ifelse(TE1<=TC1,1,0)
+  treat1 = rep(1,n1)
+
   # TWO-SAMPLE DATA
-  ######################################  
+  ######################################
   db = data.frame(binary=c(BE1, BE0), time=c(time1,time0), status=c(status1,status0),treat=c(treat1,treat0))
-  
-  
+
+
   return(db)
 }
 
@@ -161,17 +162,17 @@ fCS.TEST <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring
 ##################################################################################
 
 fCS.TEST_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring="Exp", tau, taub, rho, gam, eta, wb, ws, var_est){
-  
+
   # TWO-SAMPLE db
   ######################################
-  
+
   db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, H0=FALSE)
   # db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
-  
+
   # STATISTICS
   ######################################
   TestBS = lstats(db$time,db$status, db$binary, db$treat, tau0=0, tau, taub, rho, gam, eta, wb, ws, var_est)
-  
+
   return(TestBS[1])
 }
 
@@ -180,19 +181,19 @@ fCS.TEST_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n
 ##################################################################################
 
 fCS.TEST_Bonf <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp", tau, taub, rho, gam, eta){
-  
+
   # TWO-SAMPLE db
   ######################################
   db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
-  
+
   # STATISTICS
   ######################################
   B <- bintest(db$binary, db$treat, var_est="Unpooled")
   test_b <- B[1]
-  
+
   S <- survtest(db$time, db$status, db$treat, tau, rho, gam, eta)
   test_s <- S[1]
-  
+
   return(c(test_b,test_s))
 }
 
@@ -205,8 +206,8 @@ fCS.TEST_Bonf_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, 
   ######################################
   # db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
 
-  db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, H0=FALSE) 
-  
+  db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, H0=FALSE)
+
   # STATISTICS
   ######################################
   B <- bintest(db$binary, db$treat, var_est="Unpooled")

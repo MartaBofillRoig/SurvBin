@@ -23,20 +23,22 @@ require(zoo) # 'rollmean' function
 require(muhaz)
 
 # Functions for the binary and survival setting; for the covariance computation; and for simulating the binary and time-to-event data
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/survival-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/cov-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/lstats_boots.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/survival-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/cov-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions_H1.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/lstats_boots.R') 
 
-source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/binary-functions.R')
-source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/survival-functions.R')
-source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/cov-functions.R')
-source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/simulation-functions.R')
-source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/simulation-functions_H1.R')
-source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
-source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Extension_Simulation/lstats_boots.R') 
+# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/binary-functions.R')
+# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/survival-functions.R')
+# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/cov-functions.R')
+# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/simulation-functions.R')
+# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/simulation-functions_H1.R')
+# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
+# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Extension_Simulation/lstats_boots.R') 
+# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Extension_Simulation/lstats_boots.R')
 
 set.seed(54321)
 ```
@@ -293,8 +295,7 @@ ggsurvplot(
 ```
 
 Scenarios Simulation:
-```{r}
-# Parameters
+```{r} 
 alpha=0.05;
 z.alpha <- qnorm(1-alpha,0,1)
 z.alphac <- qnorm(1-alpha/2,0,1) 
@@ -306,16 +307,24 @@ nsim=1000
 
 power_plugin <- sum(replicate(nsim,fCS.TEST_H1(a.shape=a, b.scale=b, HR=0.80, rate.param=tau, p0=p0, p1=p1, ass.par=0.5, 
                                                n0=500, n1=500, censoring="Unif", 
-                                               tau=2, taub=1, rho=1, gam=1, eta=1, wb=0.5, ws=0.5, var_est='Pooled')) > z.alpha,na.rm = T)/nsim  
+                                               tau=2, taub=1, rho=1, gam=1, eta=1, 
+                                               wb=0.5, ws=0.5, var_est='Pooled')) > z.alpha,na.rm = T)/nsim  
 
-power_Bonf <- sum(replicate(nsim,(sum(fCS.TEST_Bonf_H1(a.shape=a, b.scale=b, HR=0.80, rate.param=tau, p0=p0, p1=p1, ass.par=0.5, 
+power_Bonf <- sum(replicate(nsim,(sum(fCS.TEST_Bonf_H1(a.shape=a, b.scale=b, HR=0.80, rate.param=tau, 
+                                                       p0=p0, p1=p1, ass.par=0.5, 
                                                        n0=500, n1=500, censoring="Unif", 
                                                        tau=2, taub=1, rho=1, gam=1, eta=1)>z.alphac)>=1)))/nsim
                                                
 
+power_boots <- sum(replicate(nsim,fCS.TEST_boots_H1(a.shape=a, b.scale=b, HR=0.80, 
+                                                     rate.param=tau, p0=p0, p1=p1, ass.par=0.5, 
+                                                     n0=500, n1=500, censoring="Unif", 
+                                                     tau=2, taub=1, rho=1, gam=1, eta=1, 
+                                                     wb=0.5, ws=0.5)) > z.alpha,na.rm = T)/nsim
+
 (power_plugin)
 (power_Bonf)
-
+(power_boots)
 ```
 
 
