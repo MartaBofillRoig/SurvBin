@@ -17,3 +17,10 @@ The **SurvBin** package also provides the function *survbinCov* that can be used
 library(devtools)
 install_github("MartaBofillRoig/SurvBin")
 ```
+
+## References
+
+This repository also contains the source files of the preprint:
+
+- "A class of two-sample nonparametric statistics for binary and time-to-event outcomes". Marta Bofill Roig, Guadalupe Gómez Melis. (2020). 
+https://arxiv.org/abs/2002.01369
