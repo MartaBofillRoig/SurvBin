@@ -176,6 +176,38 @@ cat(t1, "\n", file="LOG_Results_H1.txt", append=TRUE)
 rm(i)
 save.image("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1.RData")
 
+#########
+# BINARY STATISTIC
+
+data$Test_Alpha_B=0
+data$Test_Power_B=0
+
+# for(i in 1:3){ # just for testing
+for(i in 1:dim(data)[1]){
+
+  data$Test_Alpha_B[i] <- sum(replicate(nsim,fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+                                                              rate.param=data$r[i], p0=data$p0[i], p1=data$p0[i],
+                                                              ass.par=data$theta[i],
+                                                              n0=data$n[i]/2, n1=data$n[i]/2,
+                                                              censoring="Unif",
+                                                              tau=data$tau[i],
+                                                              taub=data$taub[i],
+                                                              rho=data$rho[i], gam=data$gamma[i],
+                                                              eta=data$eta[i])[2]) > z.alpha)/nsim
+
+  data$Test_Power_B[i] <- sum(replicate(nsim,fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+                                                              rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
+                                                              ass.par=data$theta[i],
+                                                              n0=data$n[i]/2, n1=data$n[i]/2,
+                                                              censoring="Unif",
+                                                              tau=data$tau[i],
+                                                              taub=data$taub[i],
+                                                              rho=data$rho[i], gam=data$gamma[i],
+                                                              eta=data$eta[i])[1]) > z.alpha)/nsim
+}
+
+summary(data$Test_Alpha_B)
+summary(data$Test_Power_B)
 
 #########
 library(boot)
