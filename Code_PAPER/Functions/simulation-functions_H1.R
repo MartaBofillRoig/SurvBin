@@ -104,10 +104,10 @@ simsurvbin_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0,
                    margins = c("unif", "unif"),
                    paramMargins = list(list(0,1), list(0,1)))
 
-  # TREATMENT GROUP
+  # CONTROL GROUP
   ######################################
   v = rMvdc(n1,copulaSB)
-  BE0 = ifelse(v[,2]<p1, 1, 0)
+  BE0 = ifelse(v[,2]<p0, 1, 0)
   TE0 = (-log(v[,1])/(lambda))^(1/rho)
 
   time0= ifelse(TE0<=TC0, TE0, TC0)
@@ -115,7 +115,7 @@ simsurvbin_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0,
   status0 = ifelse(TE0<=TC0,1,0)
   treat0 = rep(0,n0)
 
-  # CONTROL GROUP
+  # TREATMENT GROUP
   ######################################
 
   v = rMvdc(n1,copulaSB)
