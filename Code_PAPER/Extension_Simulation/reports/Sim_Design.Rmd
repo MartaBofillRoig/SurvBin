@@ -23,22 +23,22 @@ require(zoo) # 'rollmean' function
 require(muhaz)
 
 # Functions for the binary and survival setting; for the covariance computation; and for simulating the binary and time-to-event data
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/survival-functions.R')
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/cov-functions.R')
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions.R')
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions_H1.R')
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats-functions.R')
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/lstats_boots.R') 
+# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
+# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/survival-functions.R')
+# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/cov-functions.R')
+# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions.R')
+# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions_H1.R')
+# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats-functions.R')
+# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/lstats_boots.R') 
 
-# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/binary-functions.R')
-# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/survival-functions.R')
-# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/cov-functions.R')
-# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/simulation-functions.R')
-# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/simulation-functions_H1.R')
-# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
-# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Extension_Simulation/lstats_boots.R') 
-# source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Extension_Simulation/lstats_boots.R')
+source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/binary-functions.R')
+source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/survival-functions.R')
+source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/cov-functions.R')
+source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/simulation-functions.R')
+source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/simulation-functions_H1.R')
+source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
+source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Extension_Simulation/lstats_boots.R')
+source('C:/Users/Marta/Nextcloud/GitKraken/SurvBin/Code_PAPER/Extension_Simulation/lstats_boots.R')
 
 set.seed(54321)
 ```
@@ -303,7 +303,7 @@ nsim=1000
 ```
 
 
-```{r}
+```{r, eval=F}
 
 power_plugin <- sum(replicate(nsim,fCS.TEST_H1(a.shape=a, b.scale=b, HR=0.80, rate.param=tau, p0=p0, p1=p1, ass.par=0.5, 
                                                n0=500, n1=500, censoring="Unif", 
@@ -327,6 +327,42 @@ power_boots <- sum(replicate(nsim,fCS.TEST_boots_H1(a.shape=a, b.scale=b, HR=0.8
 (power_boots)
 ```
 
+## Scenarios
+
+
+Using a formula:
+```{r}
+load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0.RData")
+i=1
+data=simsurvbin_H1(a.shape=data$a[i], b.scale=data$b[i], HR=1, rate.param=data$r[i], p0=data$p0[i], p1=data$p0[i], ass.par=data$theta[i], n0=data$n[i]/2, n1=data$n[i]/2, censoring="Unif", H0=FALSE) 
+
+sum(subset(data, data$treat==1)$binary)/n1
+sum(subset(data, data$treat==0)$binary)/n0
+coxph(Surv(time, status) ~ treat, data) 
+```
+
+Kaplan-Meier curves:
+```{r,fig.height=8,fig.width=8}
+sf.twogroups <- survfit(Surv(time=time,event=status)~treat, data)
+ggsurvplot(
+  sf.twogroups,            # survfit object with calculated statistics.
+  data = data,             # data used to fit survival curves.
+  risk.table = TRUE,       # show risk table.
+  pval = TRUE,             # show p-value of log-rank test.
+  conf.int = TRUE,         # show confidence intervals for point estimates of survival curves.  
+  xlab = "Time",   # customize X axis label.
+  # break.time.by = 100,     # break X axis in time intervals by 500.
+  ggtheme = theme_light(), # customize plot and risk table with a theme.
+  risk.table.y.text.col = T,# colour risk table text annotations.
+  risk.table.height = 0.25, # the height of the risk table
+  risk.table.y.text = FALSE,# show bars instead of names in text annotations in legend of risk table.
+  ncensor.plot = TRUE,      # plot the number of censored subjects at time t
+  ncensor.plot.height = 0.25,
+  conf.int.style = "step",  # customize style of confidence intervals
+  surv.median.line = "hv",   # add the median survival pointer
+  title    = "Survival function"
+) 
+```
 
 
 ## Under non-PH model

@@ -1,7 +1,7 @@
 
 #####################################################################################
 
-lstats_boots <- function(x1, x2, x3, x4, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1, w1=0.5, w2=0.5){
+lstats_boots <- function(x1, x2, x3, x4, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1, w1=0.5, w2=0.5, Boot=50){
 
   db=cbind.data.frame(time=x1, status=x2, binary=x3, treat=x4)
 
@@ -27,9 +27,9 @@ lstats_boots <- function(x1, x2, x3, x4, tau0=0, tau=NULL, taub=NULL, rho=0, gam
   u_bs = w1*test_b + w2*test_s
 
   # bootstrap
-  B=50
+  # B=50
   ubs_boot <- data.frame(0)
-  for(i in 1:B){
+  for(i in 1:Boot){
     daux <- db[sample(1:nrow(db),nrow(db),rep=TRUE),]
     btt <- bintest(daux$binary, daux$treat)[1]
     stt <- survtest(daux$time, daux$status, daux$treat)[1]
@@ -45,7 +45,7 @@ lstats_boots <- function(x1, x2, x3, x4, tau0=0, tau=NULL, taub=NULL, rho=0, gam
 
 ##################################################################################
 
-fCS.TEST_boots <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp", tau, taub, rho, gam, eta, wb, ws){
+fCS.TEST_boots <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp", tau, taub, rho, gam, eta, wb, ws, Boot){
 
   # TWO-SAMPLE db
   ######################################
@@ -53,7 +53,7 @@ fCS.TEST_boots <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, cen
 
   # STATISTICS
   ######################################
-  TestBS = lstats_boots(db$time,db$status, db$binary, db$treat, tau0=0, tau, taub, rho, gam, eta, wb, ws)
+  TestBS = lstats_boots(db$time,db$status, db$binary, db$treat, tau0=0, tau, taub, rho, gam, eta, wb, ws, Boot)
 
   return(TestBS[1])
 }
@@ -61,7 +61,7 @@ fCS.TEST_boots <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, cen
 
 ##################################################################################
 
-fCS.TEST_boots_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par,  n0, n1, censoring="Exp", tau, taub, rho, gam, eta, wb, ws){
+fCS.TEST_boots_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par,  n0, n1, censoring="Exp", tau, taub, rho, gam, eta, wb, ws, Boot){
 
   # TWO-SAMPLE db
   ######################################
@@ -70,7 +70,7 @@ fCS.TEST_boots_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par,
 
   # STATISTICS
   ######################################
-  TestBS = lstats_boots(db$time,db$status, db$binary, db$treat, tau0=0, tau, taub, rho, gam, eta, wb, ws)
+  TestBS = lstats_boots(db$time,db$status, db$binary, db$treat, tau0=0, tau, taub, rho, gam, eta, wb, ws, Boot)
 
   return(TestBS[1])
 }
