@@ -38,7 +38,7 @@ source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/cov-func
 source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/simulation-functions.R')
 source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/simulation-functions_H1.R')
 source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats_boots.R')
+source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/lstats_boots.R')
 
 # Parameters
 alpha=0.05;
@@ -46,7 +46,7 @@ z.alpha <- qnorm(1-alpha,0,1)
 z.alphac <- qnorm(1-alpha/2,0,1)
 
 # nsim: number of simulations
-nsim=500
+nsim=100
 
 # Note:
 # alpha=0.05
@@ -75,12 +75,12 @@ taub= c(0.5,1)
 r=c(3) #unif
 p0=c(0.1, 0.3)
 d=c(0.1)
-HR=c(0.75)
+HR=c(0.80)
 theta=c(0.001,2,3)
 n=c(500)
 
 # test
-eta=c(0,1)
+eta=c(1)
 rho=c(0,1)
 gamma=c(0,1)
 # omegab=c(0.5)
@@ -103,7 +103,8 @@ data$Test_Power_Bonf=0
 data$Test_Power_S=0
 data$Test_Power_B=0
 
-##################################################################################### 
+#####################################################################################
+# H0 FALSE: Empirical powers
 #####################################################################################
 
 
@@ -200,12 +201,12 @@ taub= c(0.5,1)
 r=c(3) #unif
 p0=c(0.1, 0.3)
 d=c(0)
-HR=c(0.75)
+HR=c(0.80)
 theta=c(0.001,2,3)
 n=c(500)
 
 # test
-eta=c(0,1)
+eta=c(1)
 rho=c(0,1)
 gamma=c(0,1)
 # omegab=c(0.5)
@@ -230,8 +231,10 @@ data$Test_Power_Bonf=0
 data$Test_Power_S=0
 data$Test_Power_B=0
 
-##################################################################################### 
 #####################################################################################
+# H0 FALSE: Empirical powers
+#####################################################################################
+
 
 # for(i in 1:3){ # just for testing
 for(i in 1:dim(data)[1]){
@@ -331,7 +334,7 @@ theta=c(0.001,2,3)
 n=c(500)
 
 # test
-eta=c(0,1)
+eta=c(1)
 rho=c(0,1)
 gamma=c(0,1)
 # omegab=c(0.5)
@@ -356,8 +359,10 @@ data$Test_Power_Bonf=0
 data$Test_Power_S=0
 data$Test_Power_B=0
 
-##################################################################################### 
 #####################################################################################
+# H0 FALSE: Empirical powers
+#####################################################################################
+
 
 # for(i in 1:3){ # just for testing
 for(i in 1:dim(data)[1]){
@@ -464,7 +469,7 @@ theta=c(0.001,2,3)
 n=c(500)
 
 # test
-eta=c(0,1)
+eta=c(1)
 rho=c(0,1)
 gamma=c(0,1)
 omegab=c(0.5)
@@ -486,7 +491,6 @@ save.image("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simu
 # nsim: number of simulations
 nsim=1000
 
-#####################################################################################
 # simulation seed
 set.seed(1987)
 
@@ -579,48 +583,3 @@ rm(i)
 save.image("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0.RData")
 # save.image("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0.RData")
 
-#####################################################################################
-# results empirical alpha without correcting small sample size 
-
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/cov-functions_wc.R')
-
-data$Test_Alpha_pluginU_c=0
-data$Test_Alpha_pluginP_c=0 
-
-
-set.seed(1983)
-
-# for(i in 1:3){ # just for testing
-for(i in 1:dim(data)[1]){
-  
-  data$Test_Alpha_pluginU_c[i] <- sum(replicate(nsim,try(fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=1,
-                                                               rate.param=data$r[i], p0=data$p0[i], p1=data$p0[i],
-                                                               ass.par=data$theta[i],
-                                                               n0=data$n[i]/2, n1=data$n[i]/2,
-                                                               censoring="Unif",
-                                                               tau=data$tau[i],
-                                                               taub=data$taub[i],
-                                                               rho=data$rho[i], gam=data$gamma[i], eta=data$eta[i],
-                                                               wb=data$omegab[i], ws=data$omegas[i],
-                                                               var_est='Unpooled'),silent = T)) > z.alpha, na.rm = T)/nsim
-  
-  data$Test_Alpha_pluginP_c[i] <- sum(replicate(nsim,try(fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=1,
-                                                               rate.param=data$r[i], p0=data$p0[i], p1=data$p0[i],
-                                                               ass.par=data$theta[i],
-                                                               n0=data$n[i]/2, n1=data$n[i]/2,
-                                                               censoring="Unif",
-                                                               tau=data$tau[i],
-                                                               taub=data$taub[i],
-                                                               rho=data$rho[i], gam=data$gamma[i], eta=data$eta[i],
-                                                               wb=data$omegab[i], ws=data$omegas[i],
-                                                               var_est='Pooled'),silent = T)) > z.alpha, na.rm = T)/nsim  
-  
-  t1=Sys.time()-t0
-  cat(i, "\t", t1, "\n", file="LOG_Results_H0.txt", append=TRUE)
-  save.image("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0_wc.RData")
-  # save.image("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0.RData")
-}
-
-save.image("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0_wc.RData")
-
-# 

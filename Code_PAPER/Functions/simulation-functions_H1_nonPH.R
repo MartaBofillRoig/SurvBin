@@ -73,7 +73,7 @@ simsurvbin_H1_nonPH <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.pa
   # beyond tstar  
   v = rMvdc(n=n1-round(n1*p),copulaSB_delbeyond)
   
-  BE1_bey = ifelse(v[,2]<p0, 1, 0)
+  BE1_bey = ifelse(v[,2]<p1, 1, 0)
   TE1_bey <- (- log(v[,1])/(lambda*HR))^(1/rho) 
   
   BE1=c(BE1_bef,BE1_bey)

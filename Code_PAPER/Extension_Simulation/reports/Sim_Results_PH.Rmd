@@ -95,6 +95,21 @@ signlevel_data <- data.frame(signlevel=c(data_H0$Test_Alpha_pluginU,
 ggplot(signlevel_data, aes(x=Test, y=signlevel)) + geom_boxplot()
 ```
 
+Without correction for small sample size:
+
+```{r}
+load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0_wc.RData")
+data_H0 = data
+```
+
+```{r}
+d= summary(data_H0[,17:18])
+knitr::kable(
+  d, caption = 'Empirical alpha'
+)
+```
+
+
 
 ## TO DO LIST
 
@@ -117,7 +132,7 @@ ggplot(signlevel_data, aes(x=Test, y=signlevel)) + geom_boxplot()
 | $r$ | $3$ |
 | $p_0$ | $0.1,0.3$ |
 | $d$ | $0.1$ |
-| $HR$ | $0.8$ |
+| $HR$ | $0.75$ |
 | $\theta$ | $0.001,2,3$ |
 | $n$ | $500$ |
 | $\eta$ | $1$ |
@@ -128,6 +143,7 @@ ggplot(signlevel_data, aes(x=Test, y=signlevel)) + geom_boxplot()
 ```{r}
 load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case1.RData")
 data_H1 = data
+# summary(data)
 ```
 
 
@@ -186,7 +202,7 @@ ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) + geom_boxplot
 | $r$ | $3$ |
 | $p_0$ | $0.1,0.3$ |
 | $d$ | $0$ |
-| $HR$ | $0.8$ |
+| $HR$ | $0.75$ |
 | $\theta$ | $0.001,2,3$ |
 | $n$ | $500$ |
 | $\eta$ | $1$ |

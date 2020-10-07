@@ -161,13 +161,16 @@ fCS.TEST <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring
 
 ##################################################################################
 
-fCS.TEST_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring="Exp", tau, taub, rho, gam, eta, wb, ws, var_est){
+fCS.TEST_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring="Exp", tau, taub, rho, gam, eta, wb, ws, var_est, PH=TRUE, tstar=0){
 
   # TWO-SAMPLE db
   ######################################
-
-  db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, H0=FALSE)
-  # db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
+  if(PH==TRUE){
+    db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, H0=FALSE) 
+  }else{
+    db = simsurvbin_H1_nonPH(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, tstar) 
+  }
+  
 
   # STATISTICS
   ######################################
@@ -200,14 +203,17 @@ fCS.TEST_Bonf <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, cens
 
 ##################################################################################
 
-fCS.TEST_Bonf_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring="Exp", tau, taub, rho, gam, eta){
+fCS.TEST_Bonf_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring="Exp", tau, taub, rho, gam, eta, PH=TRUE, tstar=0){
 
   # TWO-SAMPLE db
   ######################################
-  # db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
-
-  db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, H0=FALSE)
-
+  if(PH==TRUE){
+    db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, H0=FALSE) 
+  }else{
+    db = simsurvbin_H1_nonPH(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, tstar) 
+  }
+  
+  
   # STATISTICS
   ######################################
   B <- bintest(db$binary, db$treat, var_est="Unpooled")
