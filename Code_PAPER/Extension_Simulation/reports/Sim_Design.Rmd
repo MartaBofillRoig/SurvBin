@@ -380,3 +380,5 @@ $$T_1 \sim \left( -\frac{\log(U)}{(1/b)^a} \right)^{1/a}$$
 where $U\sim Uniform (e^{-(1/b)^a   t_*^a },1)$. While we simulate $n_1 \cdot (1-p)$ subjects using:
 $$T_1 \sim \left( -\frac{\log(U)}{(1/b)^a*HR} \right)^{1/a}$$ 
 where $U\sim Uniform (0,e^{-(1/b)^a   t_*^a })$.
+
+Note that $p=1-S^{(0)}(t_*)$.
