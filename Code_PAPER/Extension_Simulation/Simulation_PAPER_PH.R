@@ -598,7 +598,7 @@ set.seed(1983)
 # for(i in 1:3){ # just for testing
 for(i in 1:dim(data)[1]){
   
-  data$Test_Alpha_pluginU_c[i] <- sum(replicate(nsim,fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=1,
+  data$Test_Alpha_pluginU_c[i] <- sum(replicate(nsim,try(fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=1,
                                                                rate.param=data$r[i], p0=data$p0[i], p1=data$p0[i],
                                                                ass.par=data$theta[i],
                                                                n0=data$n[i]/2, n1=data$n[i]/2,
@@ -607,9 +607,9 @@ for(i in 1:dim(data)[1]){
                                                                taub=data$taub[i],
                                                                rho=data$rho[i], gam=data$gamma[i], eta=data$eta[i],
                                                                wb=data$omegab[i], ws=data$omegas[i],
-                                                               var_est='Unpooled')) > z.alpha)/nsim
+                                                               var_est='Unpooled'),silent = T)) > z.alpha, na.rm = T)/nsim
   
-  data$Test_Alpha_pluginP_c[i] <- sum(replicate(nsim,fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=1,
+  data$Test_Alpha_pluginP_c[i] <- sum(replicate(nsim,try(fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=1,
                                                                rate.param=data$r[i], p0=data$p0[i], p1=data$p0[i],
                                                                ass.par=data$theta[i],
                                                                n0=data$n[i]/2, n1=data$n[i]/2,
@@ -618,7 +618,7 @@ for(i in 1:dim(data)[1]){
                                                                taub=data$taub[i],
                                                                rho=data$rho[i], gam=data$gamma[i], eta=data$eta[i],
                                                                wb=data$omegab[i], ws=data$omegas[i],
-                                                               var_est='Pooled')) > z.alpha)/nsim  
+                                                               var_est='Pooled'),silent = T)) > z.alpha, na.rm = T)/nsim  
   
   t1=Sys.time()-t0
   cat(i, "\t", t1, "\n", file="LOG_Results_H0.txt", append=TRUE)
@@ -628,4 +628,4 @@ for(i in 1:dim(data)[1]){
 
 save.image("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0_wc.RData")
 
-
+# 
