@@ -59,7 +59,13 @@ lstats <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho
   output <- data.frame(Parameter=c("(Standardized) L-Test","L-Test", "Standard deviation"),
                        Value=c(test_l, u_bs, stdev))
 
-  return(output)
+  output_bin <- data.frame(Parameter=c("Standardized L-Test","Binary Test", "Standard deviation"),
+                       Value=c(B[1], B[2], B[3]))
+
+  output_surv <- data.frame(Parameter=c("Standardized Test","Survival Test", "Standard deviation"),
+                            Value=c(S[1], S[2], S[3]))
+
+  return(list(LTest=output,Binary_Tests=output_bin,Survival_Tests=output_surv))
 }
 
 ##################################################################################

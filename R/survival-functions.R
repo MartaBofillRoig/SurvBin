@@ -153,9 +153,9 @@ survtest <- function(time, status, treat, tau=NULL, rho=0, gam=0, eta=1,var_est=
   WKMtest <- WKM/stdev
 
   if(is.null(tau)){
-    return(list=c(Test=WKMtest,WKM=WKM,sd=stdev))
+    return(list=c(Test=WKMtest,Us=WKM,sd=stdev))
   }else{
-    return(list=c(Test=WKMtest,WKM=WKM,sd=stdev,tau=round(tau,2)))
+    return(list=c(Test=WKMtest,Us=WKM,sd=stdev,tau=round(tau,2)))
   }
 
 }

@@ -33,9 +33,9 @@ bintest <- function(binary,treat,var_est='Unpooled'){
   }
   Zb = (phat_group1-phat_group0)/sqrt(var.bin)
 
-  # return(list=c(Test=Zb,Ub=sqrt((n0*n1)/n)*(phat_group1-phat_group0),sd=sqrt(var.bin) ))
-  return(list=c(Test=Zb,Ub=sqrt((n0*n1)/n)*(phat_group1-phat_group0),sd=sqrt(phat_pooled*(1-phat_pooled))  ))
-  # return(list=c(Test=Zb,d=phat_group1-phat_group0,sd=sqrt(var.bin) ))
+  # return(list=c(Test=Zb,Ub=sqrt((n0*n1)/n)*(phat_group1-phat_group0),sd=sqrt(phat_pooled*(1-phat_pooled))  ))
+  return(list=c(Test=Zb,Ub=sqrt((n0*n1)/n)*(phat_group1-phat_group0),sd=sqrt(var.bin/(n/(n0*n1)))  ))
+
 }
 
 

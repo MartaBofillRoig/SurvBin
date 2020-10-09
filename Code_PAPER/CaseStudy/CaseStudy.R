@@ -12,7 +12,7 @@ rm(list = ls())
 setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy")
 load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
 
-set.seed(1202)
+set.seed(2020)
 
 n0=dim(pbo_IPD)[1]
 n1=dim(trt_IPD)[1]
@@ -100,7 +100,8 @@ z_sb = lstats(time=data$time, status=data$status, binary=data$binary, treat=data
 z_sb
 # z_sb[1]
 
-z_sb = lstats_boots(data$time, data$status, data$binary, data$treat, tau0=0, tau=4, rho=0, gam=1, eta=1, wb=0.25, ws=0.75, Boot = 100)
+z_sb = lstats_boots(data$time, data$status, data$binary, data$treat, tau=4, rho=0, gam=1, eta=1, wb=0.25, ws=0.75,
+                    Boot = 100)
 z_sb
 
 
