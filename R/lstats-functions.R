@@ -54,7 +54,12 @@ lstats <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho
   stdev <- sqrt(variance)
   test_l <- u_bs/stdev
 
-  return(list=c(LTest=test_l,Statistic=u_bs,sd=stdev))
+  # return(list=c(LTest=test_l,Statistic=u_bs,sd=stdev))
+
+  output <- data.frame(Parameter=c("(Standardized) L-Test","L-Test", "Standard deviation"),
+                       Value=c(test_l, u_bs, stdev))
+
+  return(output)
 }
 
 ##################################################################################

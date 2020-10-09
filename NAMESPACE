@@ -2,6 +2,7 @@
 
 export(bintest)
 export(lstats)
+export(lstats_boots)
 export(simsurvbin)
 export(survbinCov)
 export(survtest)

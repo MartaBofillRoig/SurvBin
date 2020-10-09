@@ -10,7 +10,7 @@ setwd("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/CaseStudy")
 load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
 
 # setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy")
-# load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData") 
+# load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
 
 set.seed(1202)
 
@@ -63,11 +63,17 @@ survplot(fit  = fit.rms,
 
 ######################################
 # Functions for the binary and survival setting; for the covariance computation; and for simulating the binary and time-to-event data
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/binary-functions.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/survival-functions.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/cov-functions.R') 
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats_boots.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/survival-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/cov-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats_boots.R')
+
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/binary-functions.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/survival-functions.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/cov-functions.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats_boots.R')
 
 require(zoo)
 require(survival)
@@ -94,8 +100,8 @@ z_sb = lstats(time=data$time, status=data$status, binary=data$binary, treat=data
 z_sb
 # z_sb[1]
 
-z_sb = lstats_boots(data$time, data$status, data$binary, data$treat, tau0=0, tau=4, rho=0, gam=1, eta=1, w1=0.25, w2=0.75, Boot = 100)
-z_sb 
+z_sb = lstats_boots(data$time, data$status, data$binary, data$treat, tau0=0, tau=4, rho=0, gam=1, eta=1, wb=0.25, ws=0.75, Boot = 100)
+z_sb
 
 
 ######################################
