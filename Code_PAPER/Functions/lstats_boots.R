@@ -1,7 +1,7 @@
 
 #####################################################################################
 
-lstats_boots <- function(x1, x2, x3, x4, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1, w1=0.5, w2=0.5, Boot=50){
+lstats_boots <- function(x1, x2, x3, x4, tau0=0, tau=NULL, taub=NULL, rho=0, gam=0, eta=1, wb=0.5, ws=0.5, Boot=50){
 
   db=cbind.data.frame(time=x1, status=x2, binary=x3, treat=x4)
 
@@ -24,7 +24,7 @@ lstats_boots <- function(x1, x2, x3, x4, tau0=0, tau=NULL, taub=NULL, rho=0, gam
   sigma_s <- S[3]
 
   # Calculate the statistic
-  u_bs = w1*test_b + w2*test_s
+  u_bs = wb*test_b + ws*test_s
 
   # bootstrap
   # B=50
@@ -33,7 +33,7 @@ lstats_boots <- function(x1, x2, x3, x4, tau0=0, tau=NULL, taub=NULL, rho=0, gam
     daux <- db[sample(1:nrow(db),nrow(db),rep=TRUE),]
     btt <- bintest(daux$binary, daux$treat)[1]
     stt <- survtest(daux$time, daux$status, daux$treat)[1]
-    ubs_boot[i] = w1*btt + w2*stt
+    ubs_boot[i] = wb*btt + ws*stt
   }
   stdev <- sd(ubs_boot)
   test_l <- u_bs/stdev

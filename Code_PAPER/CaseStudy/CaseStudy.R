@@ -1,10 +1,18 @@
 
-setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy")
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
-# setwd("C:/Users/mbofi/Desktop/Code_PAPER/CaseStudy")
-# load("C:/Users/mbofi/Desktop/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
+################################################################
+# Case study - Statistics Binary and Survival outcomes
+# Marta Bofill and Guadalupe Gómez
+################################################################
 
-set.seed(2020)
+rm(list = ls())
+
+setwd("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/CaseStudy")
+load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
+
+# setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy")
+# load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData") 
+
+set.seed(1202)
 
 n0=dim(pbo_IPD)[1]
 n1=dim(trt_IPD)[1]
@@ -54,14 +62,12 @@ survplot(fit  = fit.rms,
 )
 
 ######################################
-
-
-
 # Functions for the binary and survival setting; for the covariance computation; and for simulating the binary and time-to-event data
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/survival-functions.R')
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/cov-functions.R')
-source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats-functions.R')
+source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/binary-functions.R')
+source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/survival-functions.R')
+source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/cov-functions.R') 
+source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
+source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats_boots.R')
 
 require(zoo)
 require(survival)
@@ -73,17 +79,28 @@ B[1]
 S <- survtest(time=data$time, status=data$status, treat=data$treat, tau=4, rho=0, gam=1, eta=1, var_est = "Pooled")
 S[1]
 
+S <- survtest(time=data$time, status=data$status, treat=data$treat, tau=4, rho=0, gam=1, eta=1, var_est = "Unpooled")
+S[1]
+
+
 sigma_sb <- survbinCov(time=data$time, status=data$status, binary=data$binary, treat=data$treat, tau0=0, tau=4, taub=0.5, rho=0, gam=1, eta=1, var_est = "Pooled")
 sigma_sb
 
 z_sb = lstats(time=data$time, status=data$status, binary=data$binary, treat=data$treat, tau0=0, tau=4, taub=0.5, rho=0, gam=1, eta=1, wb=0.25, ws=0.75, var_est = "Pooled")
-z_sb[1]
-
-# Unpooled version
-# z_sb = lstats(time=data$time, status=data$status, binary=data$binary, treat=data$treat, tau0=0, tau=4, taub=0.5, rho=0, gam=1, eta=1, wb=0.25, ws=0.75, var_est = "Unpooled")
+z_sb
 # z_sb[1]
 
-install.packages("survRM2")
+z_sb = lstats(time=data$time, status=data$status, binary=data$binary, treat=data$treat, tau0=0, tau=4, taub=0.5, rho=0, gam=1, eta=1, wb=0.25, ws=0.75, var_est = "Unpooled")
+z_sb
+# z_sb[1]
+
+z_sb = lstats_boots(data$time, data$status, data$binary, data$treat, tau0=0, tau=4, rho=0, gam=1, eta=1, w1=0.25, w2=0.75, Boot = 100)
+z_sb 
+
+
+######################################
+
+# install.packages("survRM2")
 library(survRM2)
 
 rmst2(time=data$time, status=data$status, arm=data$treat, tau=4)

@@ -47,7 +47,7 @@ z.alpha <- qnorm(1-alpha,0,1)
 z.alphac <- qnorm(1-alpha/2,0,1)
 
 # nsim: number of simulations
-nsim=500
+nsim=100
 
 # Note:
 # alpha=0.05
@@ -77,12 +77,12 @@ tau=c(1)
 taub= c(1)
 r=c(3) #unif
 p0=c(0.1, 0.3)
-d=c(0.075,1)
+d=c(0.075)
 tstar=c(0.5)
 HR=c(0.7)
 # theta=c(0.001,2,3)
 theta=c(2,3)
-n=c(500)
+n=c(500,1000)
 
 # test
 eta=c(0,1)
