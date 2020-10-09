@@ -6,11 +6,11 @@
 
 rm(list = ls())
 
-setwd("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/CaseStudy")
-load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
+# setwd("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/CaseStudy")
+# load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
 
-# setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy")
-# load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
+setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy")
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/CaseStudy/DigitizeIt/Dataset_Survival.RData")
 
 set.seed(1202)
 
