@@ -69,8 +69,10 @@ set.seed(1999)
 # Scenarios H0 FALSE -- case 1
 #####################################################################################
 
-a=c(1)
-b=c(2)
+# a=c(1)
+# b=c(2)
+a=c(1,2)
+b=c(1)
 tau=c(1)
 taub= c(1)
 r=c(3) #unif
@@ -110,7 +112,7 @@ data$Test_Power_B=0
 # for(i in 1:2){ # just for testing
 for(i in 1:dim(data)[1]){
 
-  data$Test_Power_pluginU[i] <- sum(replicate(nsim,fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+  data$Test_Power_pluginU[i] <- sum(replicate(nsim,try(fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
                                                                rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
                                                                ass.par=data$theta[i],
                                                                n0=data$n[i]/2, n1=data$n[i]/2,
@@ -120,9 +122,9 @@ for(i in 1:dim(data)[1]){
                                                                rho=data$rho[i], gam=data$gamma[i], eta=data$eta[i],
                                                                wb=data$omegab[i], ws=data$omegas[i],
                                                                var_est='Unpooled',
-                                                               PH=FALSE, tstar=data$tstar[i])) > z.alpha)/nsim
+                                                               PH=FALSE, tstar=data$tstar[i]),silent = T)) > z.alpha, na.rm = T)/nsim
 
-  data$Test_Power_pluginP[i] <- sum(replicate(nsim,fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+  data$Test_Power_pluginP[i] <- sum(replicate(nsim,try(fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
                                                                rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
                                                                ass.par=data$theta[i],
                                                                n0=data$n[i]/2, n1=data$n[i]/2,
@@ -132,9 +134,9 @@ for(i in 1:dim(data)[1]){
                                                                rho=data$rho[i], gam=data$gamma[i], eta=data$eta[i],
                                                                wb=data$omegab[i], ws=data$omegas[i],
                                                                var_est='Pooled',
-                                                               PH=FALSE, tstar=data$tstar[i])) > z.alpha)/nsim
+                                                               PH=FALSE, tstar=data$tstar[i]),silent = T)) > z.alpha, na.rm = T)/nsim
 
-  data$Test_Power_Boots[i] <- sum(replicate(nsim,fCS.TEST_boots_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+  data$Test_Power_Boots[i] <- sum(replicate(nsim,try(fCS.TEST_boots_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
                                                                    rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
                                                                    ass.par=data$theta[i],
                                                                    n0=data$n[i]/2, n1=data$n[i]/2,
@@ -145,9 +147,9 @@ for(i in 1:dim(data)[1]){
                                                                    wb=data$omegab[i],
                                                                    ws=data$omegas[i],
                                                                    Boot=50,
-                                                                   PH=FALSE, tstar=data$tstar[i])) > z.alpha)/nsim
+                                                                   PH=FALSE, tstar=data$tstar[i]),silent = T)) > z.alpha, na.rm = T)/nsim
 
-  data$Test_Power_Bonf[i] <- sum(replicate(nsim,(sum(fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+  data$Test_Power_Bonf[i] <- sum(replicate(nsim,(sum(try(fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
                                                                       rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
                                                                       ass.par=data$theta[i],
                                                                       n0=data$n[i]/2, n1=data$n[i]/2,
@@ -156,9 +158,9 @@ for(i in 1:dim(data)[1]){
                                                                       taub=data$taub[i],
                                                                       rho=data$rho[i], gam=data$gamma[i],
                                                                       eta=data$eta[i],
-                                                                      PH=FALSE, tstar=data$tstar[i])>z.alphac)>=1)))/nsim
+                                                                      PH=FALSE, tstar=data$tstar[i]),silent = T)>z.alphac, na.rm = T)>=1)))/nsim
 
-  data$Test_Power_S[i] <- sum(replicate(nsim,fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+  data$Test_Power_S[i] <- sum(replicate(nsim,try(fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
                                                               rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
                                                               ass.par=data$theta[i],
                                                               n0=data$n[i]/2, n1=data$n[i]/2,
@@ -167,9 +169,9 @@ for(i in 1:dim(data)[1]){
                                                               taub=data$taub[i],
                                                               rho=data$rho[i], gam=data$gamma[i],
                                                               eta=data$eta[i],
-                                                              PH=FALSE, tstar=data$tstar[i])[2]) > z.alpha)/nsim
+                                                              PH=FALSE, tstar=data$tstar[i]),silent = T)[2]) > z.alpha, na.rm = T)/nsim
 
-  data$Test_Power_B[i] <- sum(replicate(nsim,fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+  data$Test_Power_B[i] <- sum(replicate(nsim,try(fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
                                                               rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
                                                               ass.par=data$theta[i],
                                                               n0=data$n[i]/2, n1=data$n[i]/2,
@@ -178,7 +180,7 @@ for(i in 1:dim(data)[1]){
                                                               taub=data$taub[i],
                                                               rho=data$rho[i], gam=data$gamma[i],
                                                               eta=data$eta[i],
-                                                              PH=FALSE, tstar=data$tstar[i])[1]) > z.alpha)/nsim
+                                                              PH=FALSE, tstar=data$tstar[i]),silent = T)[1]) > z.alpha, na.rm = T)/nsim
 
   t1=Sys.time()-t0
   cat(i, "\t", t1, "\n", file="LOG_Results_H1_nPH.txt", append=TRUE)
@@ -195,4 +197,4 @@ save.image("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simu
 
 
 ##################################################################################### 
-##################################################################################### 
+#####################################################################################  
