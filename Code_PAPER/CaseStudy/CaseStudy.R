@@ -79,16 +79,6 @@ require(zoo)
 require(survival)
 require(muhaz)
 
-B <- bintest(binary=data$binary, treat=data$treat, var_est = "Pooled")
-B[1]
-
-S <- survtest(time=data$time, status=data$status, treat=data$treat, tau=4, rho=0, gam=1, eta=1, var_est = "Pooled")
-S[1]
-
-S <- survtest(time=data$time, status=data$status, treat=data$treat, tau=4, rho=0, gam=1, eta=1, var_est = "Unpooled")
-S[1]
-
-
 sigma_sb <- survbinCov(time=data$time, status=data$status, binary=data$binary, treat=data$treat, tau0=0, tau=4, taub=0.5, rho=0, gam=1, eta=1, var_est = "Pooled")
 sigma_sb
 
