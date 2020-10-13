@@ -133,6 +133,8 @@ knitr::kable(
 
 # Simulations under the alternative hypothesis H1
 
+
+
 ## Scenarios H0 FALSE -- case 1 
 
 
