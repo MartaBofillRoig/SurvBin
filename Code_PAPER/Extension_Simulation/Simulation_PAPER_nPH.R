@@ -6,8 +6,8 @@
 
 rm(list = ls())
 # Working directory
-# setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation")
-setwd("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation")
+setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation")
+# setwd("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation")
 
 #####################################################################################
 # PREAMBLE
@@ -24,22 +24,23 @@ library(purrr) # 'possibly' function
 #####################################################################################
 
 # Functions for the binary and survival setting; for the covariance computation; and for simulating the binary and time-to-event data
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/survival-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/cov-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions_H1.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats-functions.R')
-# source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/lstats_boots.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/survival-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/cov-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions_H1.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/simulation-functions_H1_nonPH.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats-functions.R')
+source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/lstats_boots.R')
 
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/binary-functions.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/survival-functions.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/cov-functions.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/simulation-functions.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/simulation-functions_H1.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/simulation-functions_H1_nonPH.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
-source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats_boots.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/binary-functions.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/survival-functions.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/cov-functions.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/simulation-functions.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/simulation-functions_H1.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/simulation-functions_H1_nonPH.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats-functions.R')
+# source('C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Functions/lstats_boots.R')
 
 # Parameters
 alpha=0.05;
@@ -87,14 +88,14 @@ n=c(500)
 # test
 eta=c(0,1)
 rho=c(0,1)
-gamma=c(0,1) 
+gamma=c(0,1)
 omegab=c(0.5)
 
 data = tidyr::expand_grid(a,b,HR,tstar,tau,taub,r,p0,d,theta,n,eta,rho,gamma,omegab)
 
 data$p1=data$d+data$p0
-data$omegas=1-data$omegab 
-rm(a,b,taub,tau,r,p0,d,HR,omegab,theta,n,eta,rho,gamma,tstar) 
+data$omegas=1-data$omegab
+rm(a,b,taub,tau,r,p0,d,HR,omegab,theta,n,eta,rho,gamma,tstar)
 
 #####################################################################################
 #####################################################################################
@@ -107,8 +108,8 @@ data$Test_Power_Bonf=0
 data$Test_Power_S=0
 data$Test_Power_B=0
 
-##################################################################################### 
-##################################################################################### 
+#####################################################################################
+#####################################################################################
 # for(i in 1:2){ # just for testing
 for(i in 1:dim(data)[1]){
 
@@ -184,7 +185,8 @@ for(i in 1:dim(data)[1]){
 
   t1=Sys.time()-t0
   cat(i, "\t", t1, "\n", file="LOG_Results_H1_nPH.txt", append=TRUE)
-  save.image("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_nPH.RData")
+  # save.image("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_nPH.RData")
+  save.image("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/RESULTS_PAPER_H1_nPH.RData")
 }
 
 t1=Sys.time()-t0
@@ -192,9 +194,9 @@ cat(t1, "\n", file="LOG_Results_H1_nPH.txt", append=TRUE)
 (t1)
 
 rm(i)
-save.image("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_nPH.RData") 
+save.image("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/RESULTS_PAPER_H1_nPH.RData")
 
 
 
-##################################################################################### 
-#####################################################################################  
+#####################################################################################
+#####################################################################################
