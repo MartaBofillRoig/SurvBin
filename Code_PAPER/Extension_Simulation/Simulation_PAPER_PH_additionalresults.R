@@ -344,4 +344,88 @@ save.image("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPE
 
 #####################################################################################
 #####################################################################################
+set.seed(421)
+# for(i in 1:3){ # just for testing
+for(i in 201:dim(data)[1]){
+
+  data$Test_Power_pluginU[i] <- sum(replicate(nsim,fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+                                                               rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
+                                                               ass.par=data$theta[i],
+                                                               n0=data$n[i]/2, n1=data$n[i]/2,
+                                                               censoring="Unif",
+                                                               tau=data$tau[i],
+                                                               taub=data$taub[i],
+                                                               rho=data$rho[i], gam=data$gamma[i], eta=data$eta[i],
+                                                               wb=data$omegab[i], ws=data$omegas[i],
+                                                               var_est='Unpooled')) > z.alpha)/nsim
+
+  data$Test_Power_pluginP[i] <- sum(replicate(nsim,fCS.TEST_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+                                                               rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
+                                                               ass.par=data$theta[i],
+                                                               n0=data$n[i]/2, n1=data$n[i]/2,
+                                                               censoring="Unif",
+                                                               tau=data$tau[i],
+                                                               taub=data$taub[i],
+                                                               rho=data$rho[i], gam=data$gamma[i], eta=data$eta[i],
+                                                               wb=data$omegab[i], ws=data$omegas[i],
+                                                               var_est='Pooled')) > z.alpha)/nsim
+
+  data$Test_Power_Boots[i] <- sum(replicate(nsim,fCS.TEST_boots_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+                                                                   rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
+                                                                   ass.par=data$theta[i],
+                                                                   n0=data$n[i]/2, n1=data$n[i]/2,
+                                                                   censoring="Unif",
+                                                                   tau=data$tau[i],
+                                                                   taub=data$taub[i],
+                                                                   rho=data$rho[i], gam=data$gamma[i], eta=data$eta[i],
+                                                                   wb=data$omegab[i],
+                                                                   ws=data$omegas[i],
+                                                                   Boot=50)) > z.alpha)/nsim
+
+  data$Test_Power_Bonf[i] <- sum(replicate(nsim,(sum(fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+                                                                      rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
+                                                                      ass.par=data$theta[i],
+                                                                      n0=data$n[i]/2, n1=data$n[i]/2,
+                                                                      censoring="Unif",
+                                                                      tau=data$tau[i],
+                                                                      taub=data$taub[i],
+                                                                      rho=data$rho[i], gam=data$gamma[i],
+                                                                      eta=data$eta[i])>z.alphac)>=1)))/nsim
+
+  data$Test_Power_S[i] <- sum(replicate(nsim,fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+                                                              rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
+                                                              ass.par=data$theta[i],
+                                                              n0=data$n[i]/2, n1=data$n[i]/2,
+                                                              censoring="Unif",
+                                                              tau=data$tau[i],
+                                                              taub=data$taub[i],
+                                                              rho=data$rho[i], gam=data$gamma[i],
+                                                              eta=data$eta[i])[2]) > z.alpha)/nsim
+
+  data$Test_Power_B[i] <- sum(replicate(nsim,fCS.TEST_Bonf_H1(a.shape=data$a[i], b.scale=data$b[i], HR=data$HR[i],
+                                                              rate.param=data$r[i], p0=data$p0[i], p1=data$p1[i],
+                                                              ass.par=data$theta[i],
+                                                              n0=data$n[i]/2, n1=data$n[i]/2,
+                                                              censoring="Unif",
+                                                              tau=data$tau[i],
+                                                              taub=data$taub[i],
+                                                              rho=data$rho[i], gam=data$gamma[i],
+                                                              eta=data$eta[i])[1]) > z.alpha)/nsim
+
+  t1=Sys.time()-t0
+  cat(i, "\t", t1, "\n", file="LOG_Results_H1_add2.txt", append=TRUE)
+  # save.image("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_add2.RData")
+}
+
+t1=Sys.time()-t0
+cat(t1, "\n", file="LOG_Results_H1_add2.txt", append=TRUE)
+(t1)
+
+rm(i)
+save.image("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_add2.RData")
+
+
+
+#####################################################################################
+#####################################################################################
 
