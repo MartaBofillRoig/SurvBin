@@ -12,6 +12,7 @@ The **SurvBin** package contains four key functions:
 The **SurvBin** package also provides the function *survbinCov* that can be used to calculate the covariance between the survival and binary statistics; and the function *simsurvbin* for simulating bivariate binary and survival data.
 
 More information can be found at: https://martabofillroig.github.io/SurvBin/
+(see Reference tab). 
 
 ## Installation
 
