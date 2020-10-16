@@ -4,7 +4,8 @@
 
 The **SurvBin** package contains three key functions: 
 
-  - *lstats* to compute the standardized L-statistic;
+  - *lstats* to compute the standardized L-statistic  (with pooled/unpooled variance estimators);
+  - *lstats_boots* to compute the standardized L-statistic (with bootstrap variance estimator);
   - *survtest* to compute the Weighted Kaplan-Meier based-test;
   - *bintest* to compute the proportions' test. 
 
