@@ -446,3 +446,90 @@ summary(data[data$a==0.5,17:20])
 summary(data[data$a==1,17:20])
 summary(data[data$a==2,17:20])
 
+
+################################################################
+# ADDITIONAL RESULTS
+################################################################
+
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_add.RData")
+
+data_H1=data
+
+# add1
+
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "0.5" = "#0001CE", "Individual tests" = "#333C45")
+power_data <- data.frame(power=c(data_H1$Test_Power_pluginU,
+                                 data_H1$Test_Power_pluginP,
+                                 data_H1$Test_Power_Boots,
+                                 data_H1$Test_Power_Bonf,
+                                 data_H1$Test_Power_B,
+                                 data_H1$Test_Power_S
+),
+Test=c(rep("Unpooled",length(data_H1$Test_Power_pluginU)),
+       rep("Pooled",length(data_H1$Test_Power_pluginP)),
+       rep("Bootstrap",length(data_H1$Test_Power_Boots)),
+       rep("Bonferroni",length(data_H1$Test_Power_Bonf)),
+       rep("BE",length(data_H1$Test_Power_B)),
+       rep("SE",length(data_H1$Test_Power_S))
+),
+omegab=c(data_H1$omegab,
+         data_H1$omegab,
+         data_H1$omegab,
+         rep(0.5,length(data_H1$omegab)),
+         rep("Individual tests",length(data_H1$omegab)),
+         rep("Individual tests",length(data_H1$omegab))
+)
+)
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Unpooled', 'Pooled', 'Bonferroni', 'BE','SE'),
+                          ordered = TRUE)
+
+plot_add1 <- ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) + geom_boxplot()  + scale_color_manual(values = colors) + ggtitle("Small Effect Binary Endpoint") +theme(legend.position = "bottom")  + labs(color='Weight (wb)')
+# +   theme(legend.position = "none")
+
+windows()
+plot_add1
+
+
+################################################################
+
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_add2.RData")
+
+data_H1=data
+
+# add2
+
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "0.5" = "#0001CE", "Individual tests" = "#333C45")
+power_data <- data.frame(power=c(data_H1$Test_Power_pluginU,
+                                 data_H1$Test_Power_pluginP,
+                                 data_H1$Test_Power_Boots,
+                                 data_H1$Test_Power_Bonf,
+                                 data_H1$Test_Power_B,
+                                 data_H1$Test_Power_S
+),
+Test=c(rep("Unpooled",length(data_H1$Test_Power_pluginU)),
+       rep("Pooled",length(data_H1$Test_Power_pluginP)),
+       rep("Bootstrap",length(data_H1$Test_Power_Boots)),
+       rep("Bonferroni",length(data_H1$Test_Power_Bonf)),
+       rep("BE",length(data_H1$Test_Power_B)),
+       rep("SE",length(data_H1$Test_Power_S))
+),
+omegab=c(data_H1$omegab,
+         data_H1$omegab,
+         data_H1$omegab,
+         rep(0.5,length(data_H1$omegab)),
+         rep("Individual tests",length(data_H1$omegab)),
+         rep("Individual tests",length(data_H1$omegab))
+)
+)
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Unpooled', 'Pooled', 'Bonferroni', 'BE','SE'),
+                          ordered = TRUE)
+
+plot_add2 <- ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) + geom_boxplot()  + scale_color_manual(values = colors) + ggtitle("Small Effect Survival Endpoint") +theme(legend.position = "bottom")  + labs(color='Weight (wb)')
+# +   theme(legend.position = "none")
+
+windows()
+plot_add2
