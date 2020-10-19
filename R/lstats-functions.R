@@ -36,11 +36,11 @@ lstats <- function(time, status, binary, treat, tau0=0, tau=NULL, taub=NULL, rho
   ######################################
 
   B <- bintest(db$binary, db$treat, var_est)
-  test_b <- B[2]
+  test_b <- B[1]
   sigma_b <- B[3]
 
   S <- survtest(db$time, db$status, db$treat, tau, rho, gam, eta, var_est)
-  test_s <- S[2]
+  test_s <- S[1]
   sigma_s <- S[3]
 
   sigma_sb <- survbinCov(db$time,db$status,db$binary,db$treat, tau0, tau, taub, rho, gam, eta, var_est)
