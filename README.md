@@ -1,5 +1,11 @@
 # SurvBin Package
 
+## Background
+
+We propose a class of two-sample statistics for testing the equality of proportions and the equality of survival functions. We build our proposal on a weighted combination of a score test for the difference in proportions and a Weighted Kaplan-Meier statistic-based test for the difference of survival functions. The proposed statistics are fully non-parametric and do not rely on the proportional hazards assumption for the survival outcome. 
+
+We implemented the proposed statistics in the R package SurvBin.
+
 ## Description
 
 The **SurvBin** package contains four key functions: 
