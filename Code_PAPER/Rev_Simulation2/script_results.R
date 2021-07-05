@@ -14,7 +14,7 @@ library("ggplot2")
 library("gridExtra")
 
 # Working directory
-setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation")
+setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2")
 # setwd("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation")
 
 ################################################################
@@ -22,88 +22,44 @@ setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Ext
 # Under H1
 ################################################################
 
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case1.RData")
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H1_case1.RData")
 data$cases = 1
 data$tstar = 0
+
+# names(data)
+# names(data)[names(data)=="Test_Power_pluginU.V1"] <- 'Test_Power_pluginU'
+# names(data)[names(data)=="Test_Power_pluginP.V1"] <- 'Test_Power_pluginP'
+# names(data)[names(data)=="Test_Power_Boots.V1"] <- 'Test_Power_Boots'
+# names(data)[names(data)==" Test_Power_Bonf.V1"] <- ' Test_Power_Bonf'
+# names(data)[names(data)=="Test_Power_S.V1"] <- 'Test_Power_S'
+# names(data)[names(data)==" Test_Power_B.V1"] <- ' Test_Power_B'
+
 data_1 = data
 dim(data_1)
 summary(data_1)
 
-# Comparison eta=1, eta=0
-summary(data_1[data_1$eta==0,])
-summary(data_1[data_1$eta==1,])
-
-# Consider only small sample sizes for the simulation study
-data_1 = data_1[data_1$eta==1,]
-
 #
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case2.RData")
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H1_case2.RData")
 data$cases = 2
 data$tstar = 0
 data_2 = data
 dim(data_2)
 summary(data_2)
 
-# Comparison eta=1, eta=0
-summary(data_2[data_2$eta==0,])
-summary(data_2[data_2$eta==1,])
-
-# Comparison n=500 and n=1000
-summary(data_2[data_2$n==500,])
-summary(data_2[data_2$n==1000,])
-
-summary(data_2[data_2$n==500,]$Test_Power_Bonf-data_2[data_2$n==500,]$Test_Power_Boots)
-summary(data_2[data_2$n==1000,]$Test_Power_Bonf-data_2[data_2$n==1000,]$Test_Power_Boots)
-
-# Consider only small sample sizes for the simulation study
-data_2 = data_2[data_2$n==500,]
-data_2 = data_2[data_2$eta==1,]
-
 #
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case3.RData")
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H1_case3.RData")
 data$cases = 3
 data$tstar = 0
 data_3 = data
 dim(data_3)
 summary(data_3)
 
-# Comparison eta=1, eta=0
-summary(data_3[data_3$eta==0,])
-summary(data_3[data_3$eta==1,])
-
-# Comparison n=500 and n=1000
-summary(data_3[data_3$n==500,])
-summary(data_3[data_3$n==1000,])
-
-summary(data_3[data_3$n==500,]$Test_Power_Bonf-data_3[data_3$n==500,]$Test_Power_Boots)
-summary(data_3[data_3$n==1000,]$Test_Power_Bonf-data_3[data_3$n==1000,]$Test_Power_Boots)
-
-# Consider only small sample sizes for the simulation study
-data_3 = data_3[data_3$n==500,]
-data_3 = data_3[data_3$eta==1,]
-
 #
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_nPH.RData")
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H1_nPH.RData")
 data$cases = 4
 data_4 = data
 dim(data_4)
 summary(data_4)
-
-# Comparison eta=1, eta=0
-summary(data_4[data_4$eta==0,])
-summary(data_4[data_4$eta==1,])
-
-# Comparison n=500 and n=1000
-summary(data_4[data_4$n==500,])
-summary(data_4[data_4$n==1000,])
-
-summary(data_4[data_4$n==500,]$Test_Power_Bonf-data_4[data_4$n==500,]$Test_Power_Boots)
-summary(data_4[data_4$n==1000,]$Test_Power_Bonf-data_4[data_4$n==1000,]$Test_Power_Boots)
-
-# Consider only small sample sizes for the simulation study
-data_4 = data_4[data_4$n==500,]
-data_4 = data_4[data_4$eta==1,]
-data_4 = data_4[data_4$a==1,]
 
 ################################################################
 ################################################################
@@ -122,8 +78,8 @@ summary(data_H1[,17:22])
 
 # Summary per cases
 summary(data_H1[data_H1$cases==1,17:20])
-summary(data_H1[data_H1$cases==2,17:20])
-summary(data_H1[data_H1$cases==3,17:20])
+summary(data_H1[data_H1$cases==2,17:22])
+summary(data_H1[data_H1$cases==3,17:22])
 summary(data_H1[data_H1$cases==4,17:20])
 
 
@@ -142,20 +98,20 @@ summary(data_H1[data_H1$cases==4 & data_H1$taub==1,17:20])
 
 # Theta
 summary(data_H1[data_H1$cases==1 & data_H1$theta==0.001,17:20])
-summary(data_H1[data_H1$cases==1 & data_H1$theta==2,17:20])
-summary(data_H1[data_H1$cases==1 & data_H1$theta==3,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$theta==0.510,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$theta==0.910,17:20])
 
 summary(data_H1[data_H1$cases==2 & data_H1$theta==0.001,17:20])
-summary(data_H1[data_H1$cases==2 & data_H1$theta==2,17:20])
-summary(data_H1[data_H1$cases==2 & data_H1$theta==3,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$theta==0.510,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$theta==0.910,17:20])
 
 summary(data_H1[data_H1$cases==3 & data_H1$theta==0.001,17:20])
-summary(data_H1[data_H1$cases==3 & data_H1$theta==2,17:20])
-summary(data_H1[data_H1$cases==3 & data_H1$theta==3,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$theta==0.510,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$theta==0.910,17:20])
 
 summary(data_H1[data_H1$cases==4 & data_H1$theta==0.001,17:20])
-summary(data_H1[data_H1$cases==4 & data_H1$theta==2,17:20])
-summary(data_H1[data_H1$cases==4 & data_H1$theta==3,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$theta==0.510,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$theta==0.910,17:20])
 
 # Rho and Gamma
 summary(data_H1[data_H1$cases==1 & data_H1$gamma==1 & data_H1$rho==1,17:20])
@@ -403,7 +359,31 @@ grid.arrange(arrangeGrob(plot_case2, plot_case3, ncol = 2),
 ################################################################
 
 rm(list = ls())
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0.RData")
+
+# Note:
+alpha=0.05
+nsim=100000
+sd=sqrt(alpha*(1-alpha)/nsim)
+z.alpha <- qnorm(1-alpha,0,1)
+c(alpha-z.alpha*sd,alpha+z.alpha*sd)
+
+#
+rm(list = ls())
+
+# Load plugin (pooled unpooled)
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H0_alphaplugp.RData")
+data_H0_1=data
+
+# load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H0_alphaboot.RData")
+# load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H0_alphabonf.RData")
+# load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H0_alphas.RData")
+# load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H0_alphab.RData")
+
+# Load boots, bonf, univ
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_H0.RData")
+data_H0_2=data
+
+data = cbind(data_H0_1,data_H0_2[,17:20])
 summary(data)
 
 # General summary powers
@@ -453,7 +433,7 @@ summary(data[data$a==2,17:20])
 # ADDITIONAL RESULTS
 ################################################################
 
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_add.RData")
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_add.RData")
 
 data_H1=data
 
@@ -496,7 +476,7 @@ plot_add1
 
 ################################################################
 
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_add2.RData")
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_add2.RData")
 
 data_H1=data
 
