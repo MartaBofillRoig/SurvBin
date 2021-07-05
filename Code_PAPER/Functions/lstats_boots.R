@@ -45,11 +45,11 @@ lstats_boots <- function(x1, x2, x3, x4, tau0=0, tau=NULL, taub=NULL, rho=0, gam
 
 ##################################################################################
 
-fCS.TEST_boots <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp", tau, taub, rho, gam, eta, wb, ws, Boot){
+fCS.TEST_boots <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring="Exp", copula="clayton", tau, taub, rho, gam, eta, wb, ws, Boot){
 
   # TWO-SAMPLE db
   ######################################
-  db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring)
+  db = simsurvbin(a.shape, b.scale, rate.param, prob0, ass.par, ss, censoring, copula)
 
   # STATISTICS
   ######################################
@@ -61,14 +61,14 @@ fCS.TEST_boots <- function(a.shape, b.scale, rate.param, prob0, ass.par, ss, cen
 
 ##################################################################################
 
-fCS.TEST_boots_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par,  n0, n1, censoring="Exp", tau, taub, rho, gam, eta, wb, ws, Boot, PH=TRUE, tstar=0){
+fCS.TEST_boots_H1 <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par,  n0, n1, censoring="Exp", copula="clayton", tau, taub, rho, gam, eta, wb, ws, Boot, PH=TRUE, tstar=0){
 
   # TWO-SAMPLE db
   ######################################
   if(PH==TRUE){
-    db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, H0=FALSE) 
+    db = simsurvbin_H1(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, copula, H0=FALSE) 
   }else{
-    db = simsurvbin_H1_nonPH(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, tstar) 
+    db = simsurvbin_H1_nonPH(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring, copula, tstar) 
   } 
 
   # STATISTICS

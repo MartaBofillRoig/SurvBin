@@ -6,8 +6,7 @@
 #######################################################################################
 
 
-##################################################################################
-simsurvbin_H1_nonPH <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring="Exp", tstar){
+simsurvbin_H1_nonPH <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.par, n0, n1, censoring="Exp", copula="clayton", tstar){
 
   # CENSORING
   ######################################
@@ -19,18 +18,22 @@ simsurvbin_H1_nonPH <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.pa
     TC1 = runif(n= n1, min=0,max=rate.param)
     TC0 = runif(n= n0, min=0,max=rate.param)
   }
-
+  
   # RE-PARAMETRIZATION for time-to-event simulation
   ######################################
-  lambda=(1/b.scale)^a.shape
-  rho=a.shape
-
+  lambda = (1/b.scale)^a.shape
+  rho = a.shape
+  
   # Copula for binary and time-to-event
   ######################################
   # Select the copula
-  cp <- claytonCopula(param = c(0.5), dim = 2)
-  # cp <- frankCopula(param = c(2), dim = 2)
-
+  if(copula=="clayton"){
+    cp <- claytonCopula(param = c(ass.par), dim = 2)
+  }
+  if(copula=="frank"){
+    cp <- frankCopula(param = c(ass.par), dim = 2)
+  } 
+  
   # Generate the multivariate distribution
   copulaSB <- mvdc(copula = cp,
                    margins = c("unif", "unif"),
@@ -51,7 +54,7 @@ simsurvbin_H1_nonPH <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.pa
 
   # CONTROL GROUP
   ######################################
-  v = rMvdc(n1,copulaSB)
+  v = rMvdc(n0,copulaSB)
   BE0 = ifelse(v[,2]<p0, 1, 0)
   TE0 = (-log(v[,1])/(lambda))^(1/rho)
 
@@ -90,30 +93,4 @@ simsurvbin_H1_nonPH <- function(a.shape, b.scale, HR, rate.param, p0, p1, ass.pa
   return(db)
 }
 
-# 
-# # OLD version
-# if(H0==TRUE){
-#   v = rMvdc(n1,copulaSB)
-#   
-#   BE1 = ifelse(v[,2]<p0, 1, 0)
-#   TE1 = (-log(v[,1])/(lambda))^(1/rho)
-#   
-# }else{
-#   p = pweibull(q=tstar, shape=a.shape, scale = b.scale)
-#   
-#   # before tstar 
-#   v = rMvdc(n=round(n1*p),copulaSB_delbefore)
-#   
-#   BE1_bef <-  ifelse(v[,2]<p1, 1, 0)
-#   TE1_bef <- (- log(v[,1])/(lambda*HR))^(1/rho)
-#   
-#   # beyond tstar 
-#   # v = rMvdc(n=round(n1*(1-p)),copulaSB_delbeyond)
-#   v = rMvdc(n=n1-round(n1*p),copulaSB_delbeyond)
-#   
-#   BE1_bey = ifelse(v[,2]<p0, 1, 0)
-#   TE1_bey = (-log(v[,1])/(lambda))^(1/rho)
-#   
-#   BE1=c(BE1_bef,BE1_bey)
-#   TE1=c(TE1_bef,TE1_bey)
-# }
+#  

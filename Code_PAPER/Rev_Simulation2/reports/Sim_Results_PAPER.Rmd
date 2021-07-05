@@ -1,0 +1,389 @@
+---
+title: "Results Simulation Study"
+author: "Marta Bofill Roig and Guadalupe Gomez Melis"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: yes
+    toc_depth: 3
+    number_sections: true
+    code_folding: hide 
+    theme: paper   
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(wesanderson)
+library(survival)
+library(survminer)
+library(copula) 
+library(pracma) # for using the function 'integral' 
+require(zoo) # 'rollmean' function
+require(muhaz)
+```
+
+Summary:
+
+- Short results simulation study
+
+# Simulations under the null hypothesis H0
+
+## Scenarios considered
+
+
+| Parameter | Values |
+| ----------- | ----------- |
+| $a$ | $0.5,1,2$ |
+| $b$ | $1$ |
+| $\tau$ | $1$ |
+| $\tau_b$ | $0.5,1$ |
+| $r$ | $3$ |
+| $p_0$ | $0.1,0.3$ |
+| $d$ | $0$ |
+| $HR$ | $1$ |
+| $\theta$ | $0.001,2,3$ |
+| $n$ | $500$ |
+| $\eta$ | $1$ |
+| $\rho,\gamma$ | $0,1$ |
+| $\omega_b$ | $0.5$ |
+
+
+```{r}
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0.RData")
+# load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0.RData")
+data_H0 = data
+summary(data_H0[,1:16])
+```
+
+## Results
+
+
+```{r}
+d= summary(data_H0[,17:20])
+knitr::kable(
+  d, caption = 'Empirical alpha'
+)
+```
+
+
+```{r}
+d= summary(data_H0[,21:22])
+knitr::kable(
+  d, caption = 'Empirical alpha (univariate tests)'
+)
+```
+
+```{r}
+summary(data_H0[data$a==0.5,17:20])[3,]
+summary(data_H0[data$a==1,17:20])[3,]
+summary(data_H0[data$a==2,17:20])[3,]
+
+summary(data_H0[data$p0==0.1,17:20])[3,]
+summary(data_H0[data$p0==0.3,17:20])[3,] 
+
+summary(data_H0[data$taub==0.5,17:20])[3,]
+summary(data_H0[data$taub==1,17:20])[3,] 
+
+summary(data_H0[data$theta==0.001,17:20])[3,]
+summary(data_H0[data$theta==2,17:20])[3,]
+summary(data_H0[data$theta==3,17:20])[3,]
+```
+
+
+
+```{r, fig.width=10}
+signlevel_data <- data.frame(signlevel=c(data_H0$Test_Alpha_pluginU,
+                                         data_H0$Test_Alpha_pluginP,
+                                         data_H0$Test_Alpha_Boots,
+                                         data_H0$Test_Alpha_Bonf
+                                         # ,
+                                         # data_H0$Test_Alpha_B,
+                                         # data_H0$Test_Alpha_S
+                                         ),
+                             Test=c(rep("Unpooled",length(data_H0$Test_Alpha_pluginU)),
+                                    rep("Pooled",length(data_H0$Test_Alpha_pluginP)),
+                                    rep("Bootstrap",length(data_H0$Test_Alpha_Boots)),
+                                    rep("Bonferroni",length(data_H0$Test_Alpha_Bonf))
+                                    # ,
+                                    # rep("BE",length(data_H0$Test_Alpha_B)),
+                                    # rep("SE",length(data_H0$Test_Alpha_S))
+                                    )
+                             )
+
+ggplot(signlevel_data, aes(x=Test, y=signlevel)) + geom_boxplot()
+```
+
+Without correction for small sample size:
+
+```{r}
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0_wc.RData")
+# load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H0_wc.RData")
+data_H0 = data
+summary(data_H0[,1:16])
+```
+
+```{r}
+d= summary(data_H0[,17:18])
+knitr::kable(
+  d, caption = 'Empirical alpha'
+)
+```
+
+
+# Simulations under the alternative hypothesis H1
+
+
+
+## Scenarios H0 FALSE -- case 1 
+
+
+| Parameter | Values |
+| ----------- | ----------- |
+| $a$ | $0.5,1,2$ |
+| $b$ | $1$ |
+| $\tau$ | $1$ |
+| $\tau_b$ | $0.5,1$ |
+| $r$ | $3$ |
+| $p_0$ | $0.1,0.3$ |
+| $d$ | $0.1$ |
+| $HR$ | $0.75$ |
+| $\theta$ | $0.001,2,3$ |
+| $n$ | $500$ |
+| $\eta$ | $1$ |
+| $\rho,\gamma$ | $0,1$ |
+| $\omega_b$ | $0.25,0.5,0.75$ |
+
+
+```{r}
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case1.RData")
+# load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case1.RData")
+data_H1 = data
+summary(data_H1[,1:16])
+```
+
+
+## Results
+
+```{r}
+d= summary(data_H1[,17:20])
+knitr::kable(
+  d, caption = 'Empirical powers'
+)
+```
+
+```{r}
+d= summary(data_H1[,21:22])
+knitr::kable(
+  d, caption = 'Empirical powers (univariate tests)'
+)
+```
+
+```{r}
+summary(data_H1[data_H1$a==0.5,17:20])[3,]
+summary(data_H1[data_H1$a==1,17:20])[3,]
+summary(data_H1[data_H1$a==2,17:20])[3,]
+
+summary(data_H1[data_H1$p0==0.1,17:20])[3,]
+summary(data_H1[data_H1$p0==0.3,17:20])[3,] 
+
+summary(data_H1[data_H1$taub==0.5,17:20])[3,]
+summary(data_H1[data_H1$taub==1,17:20])[3,] 
+
+summary(data_H1[data_H1$theta==0.001,17:20])[3,]
+summary(data_H1[data_H1$theta==2,17:20])[3,]
+summary(data_H1[data_H1$theta==3,17:20])[3,]
+```
+
+```{r, fig.width=10}
+power_data <- data.frame(power=c(data_H1$Test_Power_pluginU,
+                                 data_H1$Test_Power_pluginP,
+                                 data_H1$Test_Power_Boots,
+                                 data_H1$Test_Power_Bonf, 
+                                 data_H1$Test_Power_B,
+                                 data_H1$Test_Power_S
+                                 ),
+                             Test=c(rep("Unpooled",length(data_H1$Test_Power_pluginU)),
+                                    rep("Pooled",length(data_H1$Test_Power_pluginP)),
+                                    rep("Bootstrap",length(data_H1$Test_Power_Boots)),
+                                    rep("Bonferroni",length(data_H1$Test_Power_Bonf)),
+                                    rep("BE",length(data_H1$Test_Power_B)),
+                                    rep("SE",length(data_H1$Test_Power_S))
+                                    ),
+                             omegab=c(data_H1$omegab,
+                                     data_H1$omegab, 
+                                     data_H1$omegab,
+                                     rep(0.5,length(data_H1$omegab)),
+                                     rep("Individual tests",length(data_H1$omegab)),
+                                     rep("Individual tests",length(data_H1$omegab))
+                                    )
+                             ) 
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Unpooled', 'Pooled', 'Bonferroni', 'BE','SE'),
+                          ordered = TRUE)
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "0.5" = "#0001CE", "Individual tests" = "#333C45")
+
+ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) + geom_boxplot() + scale_color_manual(values = colors) 
+
+```
+
+## Scenarios H0 FALSE -- case 2
+
+
+| Parameter | Values |
+| ----------- | ----------- |
+| $a$ | $0.5,1,2$ |
+| $b$ | $1$ |
+| $\tau$ | $1$ |
+| $\tau_b$ | $0.5,1$ |
+| $r$ | $3$ |
+| $p_0$ | $0.1,0.3$ |
+| $d$ | $0$ |
+| $HR$ | $0.75$ |
+| $\theta$ | $0.001,2,3$ |
+| $n$ | $500$ |
+| $\eta$ | $1$ |
+| $\rho,\gamma$ | $0,1$ |
+| $\omega_b$ | $0.25,0.5,0.75$ |
+
+
+```{r}
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case2.RData")
+# load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case2.RData")
+data_H1 = data
+summary(data_H1[,1:16])
+```
+
+
+## Results
+
+```{r}
+d= summary(data_H1[,17:20])
+knitr::kable(
+  d, caption = 'Empirical powers'
+)
+```
+
+```{r}
+d= summary(data_H1[,21:22])
+knitr::kable(
+  d, caption = 'Empirical powers (univariate tests)'
+)
+```
+
+
+```{r, fig.width=10}
+power_data <- data.frame(power=c(data_H1$Test_Power_pluginU,
+                                 data_H1$Test_Power_pluginP,
+                                 data_H1$Test_Power_Boots,
+                                 data_H1$Test_Power_Bonf, 
+                                 data_H1$Test_Power_B,
+                                 data_H1$Test_Power_S
+                                 ),
+                             Test=c(rep("Unpooled",length(data_H1$Test_Power_pluginU)),
+                                    rep("Pooled",length(data_H1$Test_Power_pluginP)),
+                                    rep("Bootstrap",length(data_H1$Test_Power_Boots)),
+                                    rep("Bonferroni",length(data_H1$Test_Power_Bonf)),
+                                    rep("BE",length(data_H1$Test_Power_B)),
+                                    rep("SE",length(data_H1$Test_Power_S))
+                                    ),
+                             omegab=c(data_H1$omegab,
+                                     data_H1$omegab, 
+                                     data_H1$omegab,
+                                     rep(0.5,length(data_H1$omegab)),
+                                     rep("Individual tests",length(data_H1$omegab)),
+                                     rep("Individual tests",length(data_H1$omegab))
+                                    )
+                             ) 
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Unpooled', 'Pooled', 'Bonferroni', 'BE','SE'),
+                          ordered = TRUE)
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "0.5" = "#0001CE", "Individual tests" = "#333C45")
+
+ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) + geom_boxplot() + scale_color_manual(values = colors) 
+
+```
+
+## Scenarios H0 FALSE -- case 2
+
+
+| Parameter | Values |
+| ----------- | ----------- |
+| $a$ | $0.5,1,2$ |
+| $b$ | $1$ |
+| $\tau$ | $1$ |
+| $\tau_b$ | $0.5,1$ |
+| $r$ | $3$ |
+| $p_0$ | $0.1,0.3$ |
+| $d$ | $0.1$ |
+| $HR$ | $1$ |
+| $\theta$ | $0.001,2,3$ |
+| $n$ | $500$ |
+| $\eta$ | $1$ |
+| $\rho,\gamma$ | $0,1$ |
+| $\omega_b$ | $0.25,0.5,0.75$ |
+
+
+```{r}
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case3.RData")
+# load("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case3.RData")
+data_H1 = data
+summary(data_H1[,1:16])
+```
+
+
+## Results
+
+```{r}
+d= summary(data_H1[,17:20])
+knitr::kable(
+  d, caption = 'Empirical powers'
+)
+```
+
+```{r}
+d= summary(data_H1[,21:22])
+knitr::kable(
+  d, caption = 'Empirical powers (univariate tests)'
+)
+```
+
+
+```{r, fig.width=10}
+power_data <- data.frame(power=c(data_H1$Test_Power_pluginU,
+                                 data_H1$Test_Power_pluginP,
+                                 data_H1$Test_Power_Boots,
+                                 data_H1$Test_Power_Bonf, 
+                                 data_H1$Test_Power_B,
+                                 data_H1$Test_Power_S
+                                 ),
+                             Test=c(rep("Unpooled",length(data_H1$Test_Power_pluginU)),
+                                    rep("Pooled",length(data_H1$Test_Power_pluginP)),
+                                    rep("Bootstrap",length(data_H1$Test_Power_Boots)),
+                                    rep("Bonferroni",length(data_H1$Test_Power_Bonf)),
+                                    rep("BE",length(data_H1$Test_Power_B)),
+                                    rep("SE",length(data_H1$Test_Power_S))
+                                    ),
+                             omegab=c(data_H1$omegab,
+                                     data_H1$omegab, 
+                                     data_H1$omegab,
+                                     rep(0.5,length(data_H1$omegab)),
+                                     rep("Individual tests",length(data_H1$omegab)),
+                                     rep("Individual tests",length(data_H1$omegab))
+                                    )
+                             ) 
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Unpooled', 'Pooled', 'Bonferroni', 'BE','SE'),
+                          ordered = TRUE)
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "0.5" = "#0001CE", "Individual tests" = "#333C45")
+
+ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) + geom_boxplot() + scale_color_manual(values = colors) 
+
+```
+
+
+
+

@@ -1,0 +1,336 @@
+
+################################################################
+# SIMULATIONS Statistics Binary and Survival outcomes
+# Results
+# Marta Bofill and Guadalupe Gómez
+################################################################
+
+rm(list = ls())
+
+# Install and load packages
+# install.packages("ggplot2")
+# install.packages("gridExtra")
+library("ggplot2")
+library("gridExtra")
+
+# Working directory
+setwd("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation")
+# setwd("C:/Users/Marta/Nextcloud/Gitkraken/SurvBin/Code_PAPER/Extension_Simulation")
+
+################################################################
+# Unified version results
+# Under H1
+################################################################
+
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case1.RData")
+data$cases = 1
+data$tstar = 0
+data_1 = data
+dim(data_1)
+summary(data_1)
+
+# Comparison eta=1, eta=0
+summary(data_1[data_1$eta==0,])
+summary(data_1[data_1$eta==1,])
+
+# Consider only small sample sizes for the simulation study
+data_1 = data_1[data_1$eta==1,]
+
+#
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case2.RData")
+data$cases = 2
+data$tstar = 0
+data_2 = data
+dim(data_2)
+summary(data_2)
+
+# Comparison eta=1, eta=0
+summary(data_2[data_2$eta==0,])
+summary(data_2[data_2$eta==1,])
+
+# Comparison n=500 and n=1000
+summary(data_2[data_2$n==500,])
+summary(data_2[data_2$n==1000,])
+
+summary(data_2[data_2$n==500,]$Test_Power_Bonf-data_2[data_2$n==500,]$Test_Power_Boots)
+summary(data_2[data_2$n==1000,]$Test_Power_Bonf-data_2[data_2$n==1000,]$Test_Power_Boots)
+
+# Consider only small sample sizes for the simulation study
+data_2 = data_2[data_2$n==500,]
+data_2 = data_2[data_2$eta==1,]
+
+#
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_case3.RData")
+data$cases = 3
+data$tstar = 0
+data_3 = data
+dim(data_3)
+summary(data_3)
+
+# Comparison eta=1, eta=0
+summary(data_3[data_3$eta==0,])
+summary(data_3[data_3$eta==1,])
+
+# Comparison n=500 and n=1000
+summary(data_3[data_3$n==500,])
+summary(data_3[data_3$n==1000,])
+
+summary(data_3[data_3$n==500,]$Test_Power_Bonf-data_3[data_3$n==500,]$Test_Power_Boots)
+summary(data_3[data_3$n==1000,]$Test_Power_Bonf-data_3[data_3$n==1000,]$Test_Power_Boots)
+
+# Consider only small sample sizes for the simulation study
+data_3 = data_3[data_3$n==500,]
+data_3 = data_3[data_3$eta==1,]
+
+#
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Extension_Simulation/results/RESULTS_PAPER_H1_nPH.RData")
+data$cases = 4
+data_4 = data
+dim(data_4)
+summary(data_4)
+
+# Comparison eta=1, eta=0
+summary(data_4[data_4$eta==0,])
+summary(data_4[data_4$eta==1,])
+
+# Comparison n=500 and n=1000
+summary(data_4[data_4$n==500,])
+summary(data_4[data_4$n==1000,])
+
+summary(data_4[data_4$n==500,]$Test_Power_Bonf-data_4[data_4$n==500,]$Test_Power_Boots)
+summary(data_4[data_4$n==1000,]$Test_Power_Bonf-data_4[data_4$n==1000,]$Test_Power_Boots)
+
+# Consider only small sample sizes for the simulation study
+data_4 = data_4[data_4$n==500,]
+data_4 = data_4[data_4$eta==1,]
+data_4 = data_4[data_4$a==1,]
+
+################################################################
+################################################################
+#
+# Unified dataset for the paper
+#
+################################################################
+################################################################
+
+data_H1 = rbind(data_1,data_2,data_3,data_4)
+data_H1$cases = as.factor(data_H1$cases)
+summary(data_H1)
+
+# General summary powers
+summary(data_H1[,17:22])
+
+# Summary per cases
+summary(data_H1[data_H1$cases==1,17:20])
+summary(data_H1[data_H1$cases==2,17:20])
+summary(data_H1[data_H1$cases==3,17:20])
+summary(data_H1[data_H1$cases==4,17:20])
+
+
+# taub
+summary(data_H1[data_H1$cases==1 & data_H1$taub==0.5,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$taub==1,17:20])
+
+summary(data_H1[data_H1$cases==2 & data_H1$taub==0.5,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$taub==1,17:20])
+
+summary(data_H1[data_H1$cases==3 & data_H1$taub==0.5,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$taub==1,17:20])
+
+summary(data_H1[data_H1$cases==4 & data_H1$taub==0.5,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$taub==1,17:20])
+
+# Theta
+summary(data_H1[data_H1$cases==1 & data_H1$theta==0.001,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$theta==2,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$theta==3,17:20])
+
+summary(data_H1[data_H1$cases==2 & data_H1$theta==0.001,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$theta==2,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$theta==3,17:20])
+
+summary(data_H1[data_H1$cases==3 & data_H1$theta==0.001,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$theta==2,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$theta==3,17:20])
+
+summary(data_H1[data_H1$cases==4 & data_H1$theta==0.001,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$theta==2,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$theta==3,17:20])
+
+# Rho and Gamma
+summary(data_H1[data_H1$cases==1 & data_H1$gamma==1 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$gamma==0 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$gamma==1 & data_H1$rho==0,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$gamma==0 & data_H1$rho==0,17:20])
+
+summary(data_H1[data_H1$cases==2 & data_H1$gamma==1 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$gamma==0 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$gamma==1 & data_H1$rho==0,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$gamma==0 & data_H1$rho==0,17:20])
+
+summary(data_H1[data_H1$cases==3 & data_H1$gamma==1 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$gamma==0 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$gamma==1 & data_H1$rho==0,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$gamma==0 & data_H1$rho==0,17:20])
+
+summary(data_H1[data_H1$cases==4 & data_H1$gamma==1 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$gamma==0 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$gamma==1 & data_H1$rho==0,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$gamma==0 & data_H1$rho==0,17:20])
+
+# Gamma (late-effects)
+summary(data_H1[data_H1$cases==1 & data_H1$gamma==1,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$gamma==0,17:20])
+
+summary(data_H1[data_H1$cases==2 & data_H1$gamma==1,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$gamma==0,17:20])
+
+summary(data_H1[data_H1$cases==3 & data_H1$gamma==1,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$gamma==0,17:20])
+
+summary(data_H1[data_H1$cases==4 & data_H1$gamma==1,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$gamma==0,17:20])
+
+# Rho (censoring)
+summary(data_H1[data_H1$cases==1 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$rho==0,17:20])
+
+summary(data_H1[data_H1$cases==2 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$rho==0,17:20])
+
+summary(data_H1[data_H1$cases==3 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$rho==0,17:20])
+
+summary(data_H1[data_H1$cases==4 & data_H1$rho==1,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$rho==0,17:20])
+
+# p0 (more/less effect binary)
+summary(data_H1[data_H1$cases==1 & data_H1$p0==0.1,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$p0==0.3,17:20])
+
+summary(data_H1[data_H1$cases==2 & data_H1$p0==0.1,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$p0==0.3,17:20])
+
+summary(data_H1[data_H1$cases==3 & data_H1$p0==0.1,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$p0==0.3,17:20])
+
+summary(data_H1[data_H1$cases==4 & data_H1$p0==0.1,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$p0==0.3,17:20])
+
+
+# a
+summary(data_H1[data_H1$cases==1 & data_H1$a==0.5,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$a==1,17:20])
+summary(data_H1[data_H1$cases==1 & data_H1$a==2,17:20])
+
+summary(data_H1[data_H1$cases==2 & data_H1$a==0.5,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$a==1,17:20])
+summary(data_H1[data_H1$cases==2 & data_H1$a==2,17:20])
+
+summary(data_H1[data_H1$cases==3 & data_H1$a==0.5,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$a==1,17:20])
+summary(data_H1[data_H1$cases==3 & data_H1$a==2,17:20])
+
+# summary(data_H1[data_H1$cases==4 & data_H1$a==0.5,17:20])
+summary(data_H1[data_H1$cases==4 & data_H1$a==1,17:20])
+# summary(data_H1[data_H1$cases==4 & data_H1$a==2,17:20])
+
+################################################################
+# Plot per case
+################################################################
+data_H1  = subset(data_H1,data_H1$omegab==0.5)
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "Multiple test" = "#0001CE", "Individual tests" = "#333C45")
+
+# case1
+power_data <- data.frame(Power=c(data_H1[data_H1$cases==1,]$Test_Power_pluginU,
+                                 # data_H1[data_H1$cases==1,]$Test_Power_pluginP,
+                                 data_H1[data_H1$cases==1,]$Test_Power_Boots,
+                                 data_H1[data_H1$cases==1,]$Test_Power_Bonf
+                                 ,
+                                 data_H1[data_H1$cases==1,]$Test_Power_B,
+                                 data_H1[data_H1$cases==1,]$Test_Power_S
+),
+Test=c(rep("Plug-in",length(data_H1[data_H1$cases==1,]$Test_Power_pluginU)),
+       # rep("Pooled",length(data_H1[data_H1$cases==1,]$Test_Power_pluginP)),
+       rep("Bootstrap",length(data_H1[data_H1$cases==1,]$Test_Power_Boots)),
+       rep("Bonferroni",length(data_H1[data_H1$cases==1,]$Test_Power_Bonf))
+       ,
+       rep("Binary test",length(data_H1[data_H1$cases==1,]$Test_Power_B)),
+       rep("Survival test",length(data_H1[data_H1$cases==1,]$Test_Power_S))
+),
+omegab=c(rep("Multiple test",length(data_H1[data_H1$cases==1,]$omegab)),
+         rep("Multiple test",length(data_H1[data_H1$cases==1,]$omegab)),
+         rep("Multiple test",length(data_H1[data_H1$cases==1,]$omegab)),
+        # data_H1[data_H1$cases==1,]$omegab,
+        #  # data_H1[data_H1$cases==1,]$omegab,
+        #  data_H1[data_H1$cases==1,]$omegab,
+        #  rep(0.5,length(data_H1[data_H1$cases==1,]$omegab)),
+         rep("Individual tests",length(data_H1[data_H1$cases==1,]$omegab)),
+         rep("Individual tests",length(data_H1[data_H1$cases==1,]$omegab))
+)
+)
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Plug-in',
+                                     # 'Pooled',
+                                     'Bonferroni'
+                                     , 'Binary test', 'Survival test'
+                                     ),
+                          ordered = TRUE)
+
+plot_case1 <- ggplot(power_data, aes(x=Test, y=Power, color=as.factor(omegab))) + geom_boxplot() + scale_color_manual(values = colors) +theme(legend.position = "bottom")  + labs(color='Univariate or multiple tests')
+
+windows()
+plot_case1
+
+########
+################################################################
+# Plot per case
+################################################################
+data_H1  = subset(data_H1,data_H1$omegab==0.5)
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "Multiple test" = "#0001CE", "Individual tests" = "#333C45")
+
+# case1
+power_data <- data.frame(Power=c(data_H1[data_H1$cases==1,]$Test_Power_pluginU,
+                                 # data_H1[data_H1$cases==1,]$Test_Power_pluginP,
+                                 data_H1[data_H1$cases==1,]$Test_Power_Boots,
+                                 data_H1[data_H1$cases==1,]$Test_Power_Bonf
+                                 # ,
+                                 # data_H1[data_H1$cases==1,]$Test_Power_B,
+                                 # data_H1[data_H1$cases==1,]$Test_Power_S
+),
+Test=c(rep("Plug-in",length(data_H1[data_H1$cases==1,]$Test_Power_pluginU)),
+       # rep("Pooled",length(data_H1[data_H1$cases==1,]$Test_Power_pluginP)),
+       rep("Bootstrap",length(data_H1[data_H1$cases==1,]$Test_Power_Boots)),
+       rep("Bonferroni",length(data_H1[data_H1$cases==1,]$Test_Power_Bonf))
+       # ,
+       # rep("Binary test",length(data_H1[data_H1$cases==1,]$Test_Power_B)),
+       # rep("Survival test",length(data_H1[data_H1$cases==1,]$Test_Power_S))
+),
+omegab=c(rep("Multiple test",length(data_H1[data_H1$cases==1,]$omegab)),
+         rep("Multiple test",length(data_H1[data_H1$cases==1,]$omegab)),
+         rep("Multiple test",length(data_H1[data_H1$cases==1,]$omegab))
+         # ,
+         # data_H1[data_H1$cases==1,]$omegab,
+         #  # data_H1[data_H1$cases==1,]$omegab,
+         #  data_H1[data_H1$cases==1,]$omegab,
+         #  rep(0.5,length(data_H1[data_H1$cases==1,]$omegab)),
+         # rep("Individual tests",length(data_H1[data_H1$cases==1,]$omegab)),
+         # rep("Individual tests",length(data_H1[data_H1$cases==1,]$omegab))
+)
+)
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Plug-in',
+                                     # 'Pooled',
+                                     'Bonferroni'
+                                     # , 'Binary test', 'Survival test'
+                          ),
+                          ordered = TRUE)
+
+plot_case1 <- ggplot(power_data, aes(x=Test, y=Power, color=as.factor(omegab))) + geom_boxplot() + scale_color_manual(values = colors) +theme(legend.position = "bottom")  + labs(color='Univariate or multiple tests')
+
+windows()
+plot_case1
+
+########
