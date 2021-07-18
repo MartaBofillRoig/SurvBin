@@ -35,4 +35,4 @@ This repository also contains the source files of the preprint:
 - "A class of two-sample nonparametric statistics for binary and time-to-event outcomes". Marta Bofill Roig, Guadalupe Gómez Melis. (2020). 
 https://arxiv.org/abs/2002.01369
 
-Specifically, in the folder CODE_paper/CaseStudy, there is the source code for reproduce the illustration; and in the folder CODE_paper/Extension_Simulation, there is the code to reproduce the simulation study (see Extension_Simulation subfolder).
+Specifically, in the folder CODE_paper/CaseStudy, there is the source code for reproduce the illustration; and in the folder CODE_paper/Simulations, there is the code to reproduce the simulation study (see Simulations subfolder).
