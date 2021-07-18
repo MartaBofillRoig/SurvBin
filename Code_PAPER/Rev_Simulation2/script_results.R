@@ -61,6 +61,11 @@ data_4 = data
 dim(data_4)
 summary(data_4)
 
+# Consider only small sample sizes for the simulation study
+data_4 = data_4[data_4$n==500,]
+data_4 = data_4[data_4$eta==1,]
+data_4 = data_4[data_4$a==1,]
+
 ################################################################
 ################################################################
 #
@@ -430,10 +435,11 @@ summary(data[data$a==2,17:20])
 
 
 ################################################################
-# ADDITIONAL RESULTS
+# ADDITIONAL RESULTS - Small effects
 ################################################################
 
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_add.RData")
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results_add/RESULTS_PAPER_addH1.RData")
+
 
 data_H1=data
 
@@ -476,7 +482,8 @@ plot_add1
 
 ################################################################
 
-load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results/RESULTS_PAPER_add2.RData")
+
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results_add/RESULTS_PAPER_addH2.RData")
 
 data_H1=data
 
@@ -515,3 +522,186 @@ plot_add2 <- ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) +
 
 windows()
 plot_add2
+
+
+################################################################
+# ADDITIONAL RESULTS - Frank copula
+################################################################
+
+
+rm(list = ls())
+
+################################################################
+# Unified version results
+# Under H1
+################################################################
+
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results_frank/RESULTS_PAPER_H1_case1.RData")
+data$cases = 1
+data$tstar = 0
+
+# names(data)
+# names(data)[names(data)=="Test_Power_pluginU.V1"] <- 'Test_Power_pluginU'
+# names(data)[names(data)=="Test_Power_pluginP.V1"] <- 'Test_Power_pluginP'
+# names(data)[names(data)=="Test_Power_Boots.V1"] <- 'Test_Power_Boots'
+# names(data)[names(data)==" Test_Power_Bonf.V1"] <- ' Test_Power_Bonf'
+# names(data)[names(data)=="Test_Power_S.V1"] <- 'Test_Power_S'
+# names(data)[names(data)==" Test_Power_B.V1"] <- ' Test_Power_B'
+
+data_1 = data
+dim(data_1)
+summary(data_1)
+
+#
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results_frank/RESULTS_PAPER_H1_case2.RData")
+data$cases = 2
+data$tstar = 0
+data_2 = data
+dim(data_2)
+summary(data_2)
+
+#
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results_frank/RESULTS_PAPER_H1_case3.RData")
+data$cases = 3
+data$tstar = 0
+data_3 = data
+dim(data_3)
+summary(data_3)
+
+#
+load("C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Rev_Simulation2/results_frank/RESULTS_PAPER_H0_alphab.RData")
+data$cases = 4
+data_h0 = data
+dim(data_h0)
+summary(data_h0)
+
+################################################################
+# Plot per case 1
+################################################################
+
+# data_H1 = rbind(data_1,data_2,data_3,data_4)
+# data_H1$cases = as.factor(data_H1$cases)
+# summary(data_H1)
+
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "0.5" = "#0001CE", "Individual tests" = "#333C45")
+
+# case1
+power_data <- data.frame(power=c(data_1$Test_Power_pluginU,
+                                 data_1$Test_Power_pluginP,
+                                 data_1$Test_Power_Boots,
+                                 data_1$Test_Power_Bonf,
+                                 data_1$Test_Power_B,
+                                 data_1$Test_Power_S
+),
+Test=c(rep("Unpooled",length(data_1$Test_Power_pluginU)),
+       rep("Pooled",length(data_1$Test_Power_pluginP)),
+       rep("Bootstrap",length(data_1$Test_Power_Boots)),
+       rep("Bonferroni",length(data_1$Test_Power_Bonf)),
+       rep("BE",length(data_1$Test_Power_B)),
+       rep("SE",length(data_1$Test_Power_S))
+),
+omegab=c(data_1$omegab,
+         data_1$omegab,
+         data_1$omegab,
+         rep(0.5,length(data_1$omegab)),
+         rep("Individual tests",length(data_1$omegab)),
+         rep("Individual tests",length(data_1$omegab))
+)
+)
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Unpooled', 'Pooled', 'Bonferroni', 'BE','SE'),
+                          ordered = TRUE)
+
+plot_case1 <- ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) + geom_boxplot() + scale_color_manual(values = colors) + ggtitle("Case 1")  + labs(color='Weight (wb)') #+  theme(legend.position = "none")
+
+
+windows()
+plot_case1
+
+################################################################
+# Plot per case 2
+################################################################
+
+# data_H1 = rbind(data_1,data_2,data_3,data_4)
+# data_H1$cases = as.factor(data_H1$cases)
+# summary(data_H1)
+
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "0.5" = "#0001CE", "Individual tests" = "#333C45")
+
+# case1
+power_data <- data.frame(power=c(data_2$Test_Power_pluginU,
+                                 data_2$Test_Power_pluginP,
+                                 data_2$Test_Power_Boots,
+                                 data_2$Test_Power_Bonf,
+                                 data_2$Test_Power_B,
+                                 data_2$Test_Power_S
+),
+Test=c(rep("Unpooled",length(data_2$Test_Power_pluginU)),
+       rep("Pooled",length(data_2$Test_Power_pluginP)),
+       rep("Bootstrap",length(data_2$Test_Power_Boots)),
+       rep("Bonferroni",length(data_2$Test_Power_Bonf)),
+       rep("BE",length(data_2$Test_Power_B)),
+       rep("SE",length(data_2$Test_Power_S))
+),
+omegab=c(data_2$omegab,
+         data_2$omegab,
+         data_2$omegab,
+         rep(0.5,length(data_2$omegab)),
+         rep("Individual tests",length(data_2$omegab)),
+         rep("Individual tests",length(data_2$omegab))
+)
+)
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Unpooled', 'Pooled', 'Bonferroni', 'BE','SE'),
+                          ordered = TRUE)
+
+plot_case2 <- ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) + geom_boxplot() + scale_color_manual(values = colors) + ggtitle("Case 2")  + labs(color='Weight (wb)') #+  theme(legend.position = "none")
+
+
+windows()
+plot_case2
+
+################################################################
+# Plot per case 3
+################################################################
+
+# data_H1 = rbind(data_1,data_2,data_3,data_4)
+# data_H1$cases = as.factor(data_H1$cases)
+# summary(data_H1)
+
+colors <- c("0.25" = "#FD6467", "0.75" = "#018F00", "0.5" = "#0001CE", "Individual tests" = "#333C45")
+
+# case1
+power_data <- data.frame(power=c(data_3$Test_Power_pluginU,
+                                 data_3$Test_Power_pluginP,
+                                 data_3$Test_Power_Boots,
+                                 data_3$Test_Power_Bonf,
+                                 data_3$Test_Power_B,
+                                 data_3$Test_Power_S
+),
+Test=c(rep("Unpooled",length(data_3$Test_Power_pluginU)),
+       rep("Pooled",length(data_3$Test_Power_pluginP)),
+       rep("Bootstrap",length(data_3$Test_Power_Boots)),
+       rep("Bonferroni",length(data_3$Test_Power_Bonf)),
+       rep("BE",length(data_3$Test_Power_B)),
+       rep("SE",length(data_3$Test_Power_S))
+),
+omegab=c(data_3$omegab,
+         data_3$omegab,
+         data_3$omegab,
+         rep(0.5,length(data_3$omegab)),
+         rep("Individual tests",length(data_3$omegab)),
+         rep("Individual tests",length(data_3$omegab))
+)
+)
+
+power_data$Test <- factor(power_data$Test,
+                          levels = c('Bootstrap', 'Unpooled', 'Pooled', 'Bonferroni', 'BE','SE'),
+                          ordered = TRUE)
+
+plot_case3 <- ggplot(power_data, aes(x=Test, y=power, color=as.factor(omegab))) + geom_boxplot() + scale_color_manual(values = colors) + ggtitle("Case 3")  + labs(color='Weight (wb)') #+  theme(legend.position = "none")
+
+windows()
+plot_case3
