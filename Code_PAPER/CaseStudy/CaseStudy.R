@@ -61,6 +61,11 @@ survplot(fit  = fit.rms,
          col=c("coral1","chartreuse4"),lwd=2,lty=1,legend.pos = "topright"
 )
 
+library(grDevices)
+savePlot(filename="Rplot",
+         type=c("png"),
+         device=dev.cur())
+
 ######################################
 # Functions for the binary and survival setting; for the covariance computation; and for simulating the binary and time-to-event data
 source('C:/Users/mbofi/Dropbox/C5/Scripts/GitKraken/survivalbinary/Code_PAPER/Functions/binary-functions.R')
